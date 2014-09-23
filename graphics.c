@@ -766,22 +766,20 @@ void DrawMouse()
 
 void InitFighters()
 {
+	LoadFighter(&f1,DOOM);
+	LoadFighter(&f2,NOTDOOM);
+	//f1.fsprite = LoadSprite("images/idoom.png",180, 150, 10);
 	
-	f1.fsprite = LoadSprite("images/idoom.png",180, 150, 10);
-	if(f1.fsprite == NULL)fprintf(stdout,"No one can load Doom\n");
-
-	f2.fsprite = LoadSprite("images/idoom.png",180, 150, 10);
-	if(f2.fsprite == NULL)fprintf(stdout,"No one can load Doom\n");
 }
 
 void DrawFighters()
 {
 	
-	f1.y = 300; f1.x = 200;
+	//f1.y = 300; f1.x = 200;
 	f2.y = 300; f2.x = 300;
-	{
-	if(f1.fsprite != NULL) DrawSprite(f1.fsprite,screen,f1.x,f1.y,f1.frame);
+	
+	if(f1.f_sprite != NULL) DrawSprite(f1.f_hurtbox,screen,f1.x,f1.y,f1.frame);
 	f1.frame = ((f1.frame + 1)%10);
-	if(f2.fsprite != NULL) DrawSprite(f2.fsprite,screen,f2.x,f2.y,f1.frame);
-	}
+	if(f2.f_sprite != NULL) DrawSprite(f2.f_sprite,screen,f2.x,f2.y,f2.frame);
+	f2.frame = ((f2.frame + 1)%10);
 }
