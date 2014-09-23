@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
   int done;
   int keyn;
 
-  Fighter f;
+  Fighter f1;
+  Fighter f2;
 
  // MakeFighter();
 
@@ -46,7 +47,7 @@ int main(int argc, char *argv[])
   {
     ResetBuffer ();
 	//draw everything else
-	//DrawFighter();
+	DrawFighters();
     DrawMouse();
     NextFrame();
     SDL_PumpEvents();
@@ -70,7 +71,7 @@ void CleanUpAll()
 void Init_All()
 {
   Init_Graphics();
-
+  InitFighters();
   InitMouse();
   atexit(CleanUpAll);
 }

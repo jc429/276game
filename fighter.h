@@ -27,6 +27,6 @@ typedef struct {
 
 } Fighter;
 void MakeFighter();
-void DrawFighter();
+void DrawFighters();
 
 #endif

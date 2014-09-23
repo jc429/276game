@@ -87,6 +87,7 @@ void FrameDelay(Uint32 delay);
 void ResetBuffer();
 void NextFrame();
 void InitMouse();
+void InitFighters();
 void DrawMouse();
 
 

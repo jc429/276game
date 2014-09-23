@@ -19,6 +19,8 @@ SDL_Surface *videobuffer; /*pointer to the actual video surface*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
 Sprite SpriteList[MaxSprites];
 Sprite *Msprite;
+Sprite *Fsprite;
+Fighter f1, f2;
 int NumSprites;
 Uint32 NOW;					/*the current time since program started*/
 
@@ -741,12 +743,12 @@ void SwapSprite(SDL_Surface *sprite,int color1,int color2,int color3)
 /*this only handles the drawing and animation of.  Assuming you have a 16 by 16  tiled sprite sheet.  This will not handle input*/
 void InitMouse()
 {
-  Msprite = LoadSprite("images/idoom.png",180, 150, 10);
- // Msprite = LoadSprite("images/mouse.png",16, 16);
-  if(Msprite == NULL)fprintf(stdout,"mouse didn't load\n");
-  Mouse.state = 0;
-  Mouse.shown = 0;
-  Mouse.frame = 0;
+ 
+	Msprite = LoadSprite("images/mouse.png",16, 16,16);
+	if(Msprite == NULL)fprintf(stdout,"mouse didn't load\n");
+	Mouse.state = 0;
+	Mouse.shown = 0;
+	Mouse.frame = 0;
 }
 
     /*draws to the screen immediately before the blit, after all
@@ -754,17 +756,32 @@ void InitMouse()
      game content*/
 void DrawMouse()
 {
-  int mx,my;
-  SDL_GetMouseState(&mx,&my);
-  if(Msprite != NULL) DrawSprite(Msprite,screen,mx,my,Mouse.frame);
-  Mouse.frame = ((Mouse.frame + 1)%10)+10;
- Mouse.x = mx;
- Mouse.y = my;
+	int mx,my;
+	SDL_GetMouseState(&mx,&my);
+	if(Msprite != NULL) DrawSprite(Msprite,screen,mx,my,Mouse.frame);
+	Mouse.frame = ((Mouse.frame + 1)%16);
+	Mouse.x = mx;
+	Mouse.y = my;
 }
 
-
-void DrawFighter(Fighter* f)
+void InitFighters()
 {
-  if(f->fsprite != NULL) DrawSprite(f->fsprite,screen,f->x,f->y,f->frame);
-  f->frame = ((f->frame + 1)%10)+10;
+	
+	f1.fsprite = LoadSprite("images/idoom.png",180, 150, 10);
+	if(f1.fsprite == NULL)fprintf(stdout,"No one can load Doom\n");
+
+	f2.fsprite = LoadSprite("images/idoom.png",180, 150, 10);
+	if(f2.fsprite == NULL)fprintf(stdout,"No one can load Doom\n");
+}
+
+void DrawFighters()
+{
+	
+	f1.y = 300; f1.x = 200;
+	f2.y = 300; f2.x = 300;
+	{
+	if(f1.fsprite != NULL) DrawSprite(f1.fsprite,screen,f1.x,f1.y,f1.frame);
+	f1.frame = ((f1.frame + 1)%10);
+	if(f2.fsprite != NULL) DrawSprite(f2.fsprite,screen,f2.x,f2.y,f1.frame);
+	}
 }
