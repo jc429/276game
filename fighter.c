@@ -9,6 +9,10 @@ void LoadFighter(Fighter* f, Character_T c){
 	t_width = 180;
 	t_height = 150;
 	t_per_row = 10;
+
+	f->x_off = 90;
+	f->y_off = 130;
+
 	f->x = 30;
 	f->y = 50;
 

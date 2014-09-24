@@ -56,7 +56,10 @@ int main(int argc, char *argv[])
     {
       DrawSprite(tile,buffer,(mx /32) * 32,(my /32) * 32,0); 
     }
-    if(keys[SDLK_ESCAPE])done = 1;
+    if(keys[SDLK_ESCAPE]){
+
+		done = 1;
+	}
   }while(!done);
   exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/
   return 0;

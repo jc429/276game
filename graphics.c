@@ -3,7 +3,9 @@
 #include "graphics.h"
 #include "fighter.h"
 
-#define MaxSprites    255
+#define MaxSprites	255
+#define XRES		1024
+#define YRES		768
 
 struct
 {
@@ -18,8 +20,9 @@ SDL_Surface *buffer; /*pointer to the background image buffer*/
 SDL_Surface *videobuffer; /*pointer to the actual video surface*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
 Sprite SpriteList[MaxSprites];
-Sprite *Msprite;
-Sprite *Fsprite;
+Sprite *Msprite;	// mouse sprite
+Sprite *Point;		// point sprite used to debug player position
+//Sprite *Fsprite;	//
 Fighter f1, f2;
 int NumSprites;
 Uint32 NOW;					/*the current time since program started*/
@@ -34,8 +37,8 @@ void Init_Graphics()
     Uint32 Vflags = SDL_FULLSCREEN | SDL_ANYFORMAT;
     Uint32 HWflag = 0;
     SDL_Surface *temp;
-    S_Data.xres = 1024;
-    S_Data.yres = 768;
+    S_Data.xres = XRES;
+    S_Data.yres = YRES;
     #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
     gmask = 0x00ff0000;
@@ -53,26 +56,26 @@ void Init_Graphics()
         exit(1);
     }
     atexit(SDL_Quit);
-    if(SDL_VideoModeOK(1024, 768, 32, SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE))
+    if(SDL_VideoModeOK(XRES, YRES, 32, SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE))
     {
-        S_Data.xres = 1024;
-        S_Data.yres = 768;
+        S_Data.xres = XRES;
+        S_Data.yres = YRES;
         S_Data.depth = 32;
         Vflags = SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE;
         HWflag = SDL_HWSURFACE;
     }
-    else if(SDL_VideoModeOK(1024, 768, 16, SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE))
+    else if(SDL_VideoModeOK(XRES, YRES, 16, SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE))
     {
-        S_Data.xres = 1024;
-        S_Data.yres = 768;
+        S_Data.xres = XRES;
+        S_Data.yres = YRES;
         S_Data.depth = 16;
         Vflags = SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE;
         HWflag = SDL_HWSURFACE;
     }
-    else if(SDL_VideoModeOK(1024, 768, 16, SDL_FULLSCREEN | SDL_ANYFORMAT))
+    else if(SDL_VideoModeOK(XRES, YRES, 16, SDL_FULLSCREEN | SDL_ANYFORMAT))
     {
-        S_Data.xres = 1024;
-        S_Data.yres = 768;
+        S_Data.xres = XRES;
+        S_Data.yres = YRES;
         S_Data.depth = 16;
         Vflags = SDL_FULLSCREEN | SDL_ANYFORMAT;
         HWflag = SDL_SWSURFACE;
@@ -749,6 +752,8 @@ void InitMouse()
 	Mouse.state = 0;
 	Mouse.shown = 0;
 	Mouse.frame = 0;
+	Point = LoadSprite("images/point.png",5,5,1);
+	if(Point==NULL)fprintf(stdout,"there's no point!\n");
 }
 
     /*draws to the screen immediately before the blit, after all
@@ -774,12 +779,21 @@ void InitFighters()
 
 void DrawFighters()
 {
-	
+	bool showpoints = true;
 	//f1.y = 300; f1.x = 200;
 	f2.y = 300; f2.x = 300;
 	
-	if(f1.f_sprite != NULL) DrawSprite(f1.f_hurtbox,screen,f1.x,f1.y,f1.frame);
-	f1.frame = ((f1.frame + 1)%10);
-	if(f2.f_sprite != NULL) DrawSprite(f2.f_sprite,screen,f2.x,f2.y,f2.frame);
-	f2.frame = ((f2.frame + 1)%10);
+	if(f1.f_sprite != NULL) {
+		DrawSprite(f1.f_hurtbox,screen,f1.x-f1.x_off,f1.y-f1.y_off,f1.frame);
+		f1.frame = ((f1.frame + 1)%10);
+	}
+	if(f2.f_sprite != NULL) {
+		DrawSprite(f2.f_sprite,screen,f2.x-f2.x_off,f2.y-f2.y_off,f2.frame);
+		f2.frame = ((f2.frame + 1)%10);
+	}
+	if(showpoints){
+		DrawPixel(screen,255,255,255,f1.x,f1.y);
+		DrawPixel(screen,255,255,255,f2.x,f2.y);
+
+	}
 }
