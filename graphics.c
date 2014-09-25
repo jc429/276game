@@ -152,7 +152,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey, int fpl)
   /*first search to see if the requested sprite image is alreday loaded*/
   for(i = 0; i < NumSprites; i++)
   {
-    if(strncmp(filename,SpriteList[i].filename,20)==0)
+    if(strncmp(filename,SpriteList[i].filename,40)==0)
     {
       SpriteList[i].used++;
       return &SpriteList[i];
@@ -176,7 +176,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey, int fpl)
     fprintf(stderr,"unable to load a vital sprite: %s\n",SDL_GetError());
     exit(0);
   }
-  SpriteList[i].image = SDL_DisplayFormat(temp);
+  SpriteList[i].image = SDL_DisplayFormatAlpha(temp);
   SDL_FreeSurface(temp);
   /*sets a transparent color for blitting.*/
   SDL_SetColorKey(SpriteList[i].image, SDL_SRCCOLORKEY , SDL_MapRGB(SpriteList[i].image->format, 255,255,255));
@@ -777,14 +777,20 @@ void InitFighters()
 	
 }
 
+
+
 void DrawFighters()
 {
+	FighterThink(&f1);
+	FighterThink(&f2);
+	FighterUpdate(&f1);
+	FighterUpdate(&f2);
 	bool showpoints = true;
 	//f1.y = 300; f1.x = 200;
 	f2.y = 300; f2.x = 300;
 	
 	if(f1.f_sprite != NULL) {
-		DrawSprite(f1.f_hurtbox,screen,f1.x-f1.x_off,f1.y-f1.y_off,f1.frame);
+		DrawSprite(f1.f_hitbox,screen,f1.x-f1.x_off,f1.y-f1.y_off,f1.frame);
 		f1.frame = ((f1.frame + 1)%10);
 	}
 	if(f2.f_sprite != NULL) {

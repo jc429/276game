@@ -18,7 +18,7 @@ enum STATES {ST_IDLE,ST_FIRE1,ST_FIRE2,ST_FIRE3,ST_DYING,ST_DEAD};
 
 typedef struct ENTITY_T
 {
-  SPRITE *sprite;
+  Sprite *sprite;
   Sound *sound[SOUNDSPERENT];
   struct ENTITY_T *owner;
   void (*think) (struct ENTITY_T *self);
@@ -54,10 +54,10 @@ void ClearEntities();
 void DrawEntities();
 void DrawEntity(Entity *ent);
 void UpdateEntities();
-void UpdateDisplayBar(Entity *player,SPRITE *window);
+void UpdateDisplayBar(Entity *player,Sprite *window);
 
 int GetNextCount(Entity *self);
-
+/*
 Entity *MakeShip();
 void PlayerThink(Entity *self);
 Entity *FireMissile(Entity *Owner,int sx,int sy,int vx,int vy,int damage,int enemy);
@@ -76,5 +76,5 @@ void PowerPickup(Entity *self);
 Entity *SpawnMantid(int sx,int sy,int type);
 void MantThink(Entity *self);
 void AttackMantThink(Entity *self);
-
+*/
 #endif

@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	DrawFighters();
     DrawMouse();
     NextFrame();
-    SDL_PumpEvents();
+	SDL_PumpEvents();
     keys = SDL_GetKeyState(&keyn);
     if(SDL_GetMouseState(&mx,&my))
     {
@@ -78,4 +78,3 @@ void Init_All()
   InitMouse();
   atexit(CleanUpAll);
 }
-
