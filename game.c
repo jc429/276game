@@ -80,4 +80,3 @@ void Init_All()
   InitMouse();
   atexit(CleanUpAll);
 }
-

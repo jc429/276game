@@ -6,7 +6,11 @@ void MakeFighter(Fighter* f){
 	
 }
 void LoadFighter(Fighter* f, Character_T c){
+<<<<<<< HEAD
 //	char* temp;			//temporary thing we read from file
+=======
+	char* temp;			//temporary thing we read from file
+>>>>>>> 9d4188ef824f8ec72ef974b5133ac1aeaa35de87
 	char* filepath;
 
 	/////Switch depending on character selected/////
@@ -17,6 +21,13 @@ void LoadFighter(Fighter* f, Character_T c){
 	///////////////////////////////////////////////
 
 
+<<<<<<< HEAD
+=======
+	char* spritepath;
+	char* hitpath;
+	char* hurtpath;
+
+>>>>>>> 9d4188ef824f8ec72ef974b5133ac1aeaa35de87
 
 ///////////////////////////////////////////////////////////////////////////////////////this is a mess 
 	{ ///file loader/////
@@ -101,6 +112,7 @@ void ClearFighter(Fighter *f){
 	if(f->f_sprite!= NULL)FreeSprite(f->f_sprite);
 	if(f->f_hitbox!= NULL)FreeSprite(f->f_hitbox);
 	if(f->f_hurtbox!= NULL)FreeSprite(f->f_hurtbox);
+<<<<<<< HEAD
 }
 
 
@@ -155,4 +167,6 @@ void Update_All()
 	FighterUpdate(&f1);
 	FighterUpdate(&f2);
 	
+=======
+>>>>>>> 9d4188ef824f8ec72ef974b5133ac1aeaa35de87
 }

@@ -771,6 +771,7 @@ void DrawMouse()
 
 
 
+<<<<<<< HEAD
 /*  FighterThink(&f1);
 	FighterThink(&f2);
 	FighterUpdate(&f1);
@@ -790,4 +791,30 @@ void DrawPlayerPoint(Fighter* f){
 	DrawPixel(screen,255,255,0,x+1,y);
 	DrawPixel(screen,255,255,0,x,y+1);
 
+=======
+
+void DrawFighters()
+{
+	FighterThink(&f1);
+	FighterThink(&f2);
+	FighterUpdate(&f1);
+	FighterUpdate(&f2);
+	bool showpoints = true;
+	//f1.y = 300; f1.x = 200;
+	f2.y = 300; f2.x = 300;
+	
+	if(f1.f_sprite != NULL) {
+		DrawSprite(f1.f_hitbox,screen,f1.x-f1.x_off,f1.y-f1.y_off,f1.frame);
+		f1.frame = ((f1.frame + 1)%10);
+	}
+	if(f2.f_sprite != NULL) {
+		DrawSprite(f2.f_sprite,screen,f2.x-f2.x_off,f2.y-f2.y_off,f2.frame);
+		f2.frame = ((f2.frame + 1)%10);
+	}
+	if(showpoints){
+		DrawPixel(screen,255,255,255,f1.x,f1.y);
+		DrawPixel(screen,255,255,255,f2.x,f2.y);
+
+	}
+>>>>>>> 9d4188ef824f8ec72ef974b5133ac1aeaa35de87
 }
