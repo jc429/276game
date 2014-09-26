@@ -11,6 +11,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+//#include "fighter.h"
 
 /*uint32*/
 #define Red_         0xDD0000
@@ -56,7 +57,7 @@ enum colors {Red = 1,Green = 2,Blue = 3,Yellow = 4,Orange = 5,Violet = 6,Brown =
 typedef struct Sprite_T
 {
   SDL_Surface *image;		/*pointer to the actual image in memory*/
-  char filename[20];			/*the name of the file, keep them short*/
+  char filename[40];			/*the name of the file, keep them short*/
   int w, h;					/*the width and height of the frames of the sprites, not the file itself*/
   int framesperline;			/*default is 16*/
   int color1,color2,color3;		/*if the file was palette swapped these are the colors that were changed*/
@@ -87,7 +88,6 @@ void FrameDelay(Uint32 delay);
 void ResetBuffer();
 void NextFrame();
 void InitMouse();
-void InitFighters();
 void DrawMouse();
 
 

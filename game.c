@@ -22,9 +22,9 @@ int main(int argc, char *argv[])
   int done;
   int keyn;
 
-  Fighter f1;
-  Fighter f2;
-
+//  Fighter* f1;
+  //Fighter* f2;
+ // Fighter f1, f2;
  // MakeFighter();
 
   int i;
@@ -47,10 +47,12 @@ int main(int argc, char *argv[])
   {
     ResetBuffer ();
 	//draw everything else
-	DrawFighters();
+	Update_All();
+	FighterControl(keys);
+	DrawFighters(screen);
     DrawMouse();
     NextFrame();
-    SDL_PumpEvents();
+	SDL_PumpEvents();
     keys = SDL_GetKeyState(&keyn);
     if(SDL_GetMouseState(&mx,&my))
     {

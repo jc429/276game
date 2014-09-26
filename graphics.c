@@ -21,9 +21,8 @@ SDL_Surface *videobuffer; /*pointer to the actual video surface*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
 Sprite SpriteList[MaxSprites];
 Sprite *Msprite;	// mouse sprite
-Sprite *Point;		// point sprite used to debug player position
-//Sprite *Fsprite;	//
-Fighter f1, f2;
+//Sprite *Point;		// point sprite used to debug player position
+//Fighter f1, f2;///////////////////////////////////////////////////////////////////////////////////////////////////////
 int NumSprites;
 Uint32 NOW;					/*the current time since program started*/
 
@@ -152,7 +151,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey, int fpl)
   /*first search to see if the requested sprite image is alreday loaded*/
   for(i = 0; i < NumSprites; i++)
   {
-    if(strncmp(filename,SpriteList[i].filename,20)==0)
+    if(strncmp(filename,SpriteList[i].filename,40)==0)
     {
       SpriteList[i].used++;
       return &SpriteList[i];
@@ -176,12 +175,12 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey, int fpl)
     fprintf(stderr,"unable to load a vital sprite: %s\n",SDL_GetError());
     exit(0);
   }
-  SpriteList[i].image = SDL_DisplayFormat(temp);
+  SpriteList[i].image = SDL_DisplayFormatAlpha(temp);
   SDL_FreeSurface(temp);
   /*sets a transparent color for blitting.*/
   SDL_SetColorKey(SpriteList[i].image, SDL_SRCCOLORKEY , SDL_MapRGB(SpriteList[i].image->format, 255,255,255));
    /*then copy the given information to the sprite*/
-  strncpy(SpriteList[i].filename,filename,20);
+  strncpy_s(SpriteList[i].filename,filename,20);
       /*now sprites don't have to be 16 frames per line, but most will be.*/
   SpriteList[i].framesperline = fpl;
   SpriteList[i].w = sizex;
@@ -230,7 +229,7 @@ Sprite *LoadSwappedSprite(char *filename,int sizex, int sizey, int c1, int c2, i
   //fprintf(stderr,"asked for colors: %d,%d,%d \n",c1,c2,c3);
   SwapSprite(SpriteList[i].image,c1,c2,c3);
    /*then copy the given information to the sprite*/
-  strcpy(SpriteList[i].filename,filename);
+  strcpy_s(SpriteList[i].filename,filename);
       /*now sprites don't have to be 16 frames per line, but most will be.*/
   SpriteList[i].framesperline = 16;
   SpriteList[i].w = sizex;
@@ -253,7 +252,7 @@ void FreeSprite(Sprite *sprite)
   sprite->used--;
   if(sprite->used == 0)
   {
-  strcpy(sprite->filename,"\0");
+  strcpy_s(sprite->filename,"\0");
      /*just to be anal retentive, check to see if the image is already freed*/
   if(sprite->image != NULL)SDL_FreeSurface(sprite->image);
   sprite->image = NULL;
@@ -450,6 +449,7 @@ void BlankScreen(SDL_Surface *buf,Uint32 color)
  * special case) or the new color.
  */
 
+
 Uint32 SetColor(Uint32 color, int newcolor1,int newcolor2, int newcolor3)
 {
     Uint8 r,g,b;
@@ -472,9 +472,9 @@ Uint32 SetColor(Uint32 color, int newcolor1,int newcolor2, int newcolor3)
         newcolor = newcolor1;
     }
     else return color;
-    switch(newcolor)
+/*     switch(newcolor)
     {
-       /* case Red:
+       case Red:
             r = intensity;
             g = 0;
             b = 0;
@@ -633,8 +633,8 @@ Uint32 SetColor(Uint32 color, int newcolor1,int newcolor2, int newcolor3)
             r = (Uint8)intensity * 0.7;
             g = 0;
             b = (Uint8)intensity * 0.7;
-            break;*/
-    }
+            break;
+    }*/
     return SDL_MapRGB(screen->format,r,g,b);
 }
 
@@ -752,8 +752,8 @@ void InitMouse()
 	Mouse.state = 0;
 	Mouse.shown = 0;
 	Mouse.frame = 0;
-	Point = LoadSprite("images/point.png",5,5,1);
-	if(Point==NULL)fprintf(stdout,"there's no point!\n");
+//	Point = LoadSprite("images/point.png",5,5,1);
+//	if(Point==NULL)fprintf(stdout,"there's no point!\n");
 }
 
     /*draws to the screen immediately before the blit, after all
@@ -769,31 +769,25 @@ void DrawMouse()
 	Mouse.y = my;
 }
 
-void InitFighters()
-{
-	LoadFighter(&f1,DOOM);
-	LoadFighter(&f2,NOTDOOM);
-	//f1.fsprite = LoadSprite("images/idoom.png",180, 150, 10);
-	
-}
 
-void DrawFighters()
-{
-	bool showpoints = true;
-	//f1.y = 300; f1.x = 200;
-	f2.y = 300; f2.x = 300;
-	
-	if(f1.f_sprite != NULL) {
-		DrawSprite(f1.f_hurtbox,screen,f1.x-f1.x_off,f1.y-f1.y_off,f1.frame);
-		f1.frame = ((f1.frame + 1)%10);
-	}
-	if(f2.f_sprite != NULL) {
-		DrawSprite(f2.f_sprite,screen,f2.x-f2.x_off,f2.y-f2.y_off,f2.frame);
-		f2.frame = ((f2.frame + 1)%10);
-	}
-	if(showpoints){
-		DrawPixel(screen,255,255,255,f1.x,f1.y);
-		DrawPixel(screen,255,255,255,f2.x,f2.y);
 
-	}
+/*  FighterThink(&f1);
+	FighterThink(&f2);
+	FighterUpdate(&f1);
+	FighterUpdate(&f2);
+	*/
+
+
+
+
+
+void DrawPlayerPoint(Fighter* f){
+	int x = f->x;
+	int y = f->y;
+	DrawPixel(screen,255,255,0,x,y);
+	DrawPixel(screen,255,255,0,x-1,y);
+	DrawPixel(screen,255,255,0,x,y-1);
+	DrawPixel(screen,255,255,0,x+1,y);
+	DrawPixel(screen,255,255,0,x,y+1);
+
 }
