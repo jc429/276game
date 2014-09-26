@@ -6,11 +6,7 @@ void MakeFighter(Fighter* f){
 	
 }
 void LoadFighter(Fighter* f, Character_T c){
-<<<<<<< HEAD
 //	char* temp;			//temporary thing we read from file
-=======
-	char* temp;			//temporary thing we read from file
->>>>>>> 9d4188ef824f8ec72ef974b5133ac1aeaa35de87
 	char* filepath;
 
 	/////Switch depending on character selected/////
@@ -21,13 +17,6 @@ void LoadFighter(Fighter* f, Character_T c){
 	///////////////////////////////////////////////
 
 
-<<<<<<< HEAD
-=======
-	char* spritepath;
-	char* hitpath;
-	char* hurtpath;
-
->>>>>>> 9d4188ef824f8ec72ef974b5133ac1aeaa35de87
 
 ///////////////////////////////////////////////////////////////////////////////////////this is a mess 
 	{ ///file loader/////
@@ -76,6 +65,8 @@ void LoadFighter(Fighter* f, Character_T c){
 		}
 		fclose(fileptr);
 
+		f->anim_length = 10;
+		f->anim_seed = 0;
 		
 		
 		
@@ -112,7 +103,6 @@ void ClearFighter(Fighter *f){
 	if(f->f_sprite!= NULL)FreeSprite(f->f_sprite);
 	if(f->f_hitbox!= NULL)FreeSprite(f->f_hitbox);
 	if(f->f_hurtbox!= NULL)FreeSprite(f->f_hurtbox);
-<<<<<<< HEAD
 }
 
 
@@ -120,8 +110,8 @@ void DrawFighters(SDL_Surface* screen)
 {
 	
 	bool showpoints = true;
-	//f1.y = 300; f1.x = 200;
-	f2.y = 300; f2.x = 300;
+	f1.y = 300; f1.x = 200;
+	f2.y = 300; f2.x = 500;
 	
 	if(f1.f_sprite != NULL) {
 		DrawChar(&f1,f1.f_sprite,screen);
@@ -131,15 +121,15 @@ void DrawFighters(SDL_Surface* screen)
 	}
 	if(showpoints){
 		DrawPlayerPoint(&f1);
-		DrawPlayerPoint(&f2);
-		
+		DrawPlayerPoint(&f2);	
 	}
 }
 
 void DrawChar(Fighter* f, Sprite* spr, SDL_Surface* screen){
 
 	DrawSprite(spr,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
-	f->frame = ((f->frame + 1)%10);
+	f->frame = (((f->frame + 1)%(f->anim_length))+f->anim_seed);
+
 }
 
 void InitFighters()
@@ -155,9 +145,11 @@ void FighterControl(Uint8* keys){
 	int keyn;
 	keys = SDL_GetKeyState(&keyn);
 
-	if(keys[SDLK_f])
+	if(keys[SDLK_w])
 		f1.x += 5;
-
+	if(keys[SDLK_x]){
+		ChangeState(&f1,ATK_N_P);
+	}
 }
 
 void Update_All()
@@ -167,6 +159,12 @@ void Update_All()
 	FighterUpdate(&f1);
 	FighterUpdate(&f2);
 	
-=======
->>>>>>> 9d4188ef824f8ec72ef974b5133ac1aeaa35de87
+}
+
+void ChangeState(Fighter* f, State_T st){
+	if(f->state != st){
+		f->state = st;
+		f->anim_seed = 20;
+		f->anim_length = 3;
+	}
 }

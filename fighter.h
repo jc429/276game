@@ -158,18 +158,15 @@ void ClearFighter();
 
 void FighterThink(Fighter*);
 void FighterUpdate(Fighter*);
-<<<<<<< HEAD
 
 void FighterControl(Uint8* keys);
 
 void DrawPlayerPoint(Fighter* f);
 
-
+void ChangeState(Fighter* f, State_T state);
 
 
 void Update_All();
 
-=======
->>>>>>> 9d4188ef824f8ec72ef974b5133ac1aeaa35de87
 
 #endif
