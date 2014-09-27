@@ -153,6 +153,7 @@ void InitFighters();
 void MakeFighter();
 void DrawFighters(SDL_Surface* screen);
 void DrawChar(Fighter* f,Sprite* spr,SDL_Surface* screen);
+void UpdateFrame(Fighter* f);
 void LoadFighter(Fighter*,Character_T);
 void ClearFighter();
 
@@ -165,6 +166,7 @@ void DrawPlayerPoint(Fighter* f);
 
 void ChangeState(Fighter* f, State_T state);
 
+void Jump(Fighter* f);
 
 void Update_All();
 

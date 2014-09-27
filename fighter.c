@@ -1,5 +1,8 @@
 #include "fighter.h"
 
+#define FLOOR 550
+
+
 Fighter f1, f2;
 
 void MakeFighter(Fighter* f){
@@ -67,8 +70,8 @@ void LoadFighter(Fighter* f, Character_T c){
 
 		f->anim_length = 10;
 		f->anim_seed = 0;
-		
-		
+		f->frame = 0;
+		f->grounded = true;
 		
 	}
 
@@ -84,10 +87,10 @@ void LoadFighter(Fighter* f, Character_T c){
 	f->x_off = 90;
 	f->y_off = 130;
 
-	f->x = 30;
-	f->y = 350;
+	f->y = FLOOR;
 
-
+	f1.x = 200;
+	f2.x = 500;
 }
 
 void FighterThink(Fighter *f){
@@ -96,7 +99,19 @@ void FighterThink(Fighter *f){
 
 
 void FighterUpdate(Fighter *f){
-	f->x += 4;
+	
+	if(!f->grounded){
+		if(f->y > FLOOR){
+			f->y = FLOOR;
+			f->grounded = true;
+		}
+		else{
+			f->y += f->vy;
+			f->vy+=2; 
+		}
+	}
+
+	if(f->y < 1) f->y = 1;
 }
 
 void ClearFighter(Fighter *f){
@@ -108,28 +123,49 @@ void ClearFighter(Fighter *f){
 
 void DrawFighters(SDL_Surface* screen)
 {
-	
+	bool showsprites = false;
 	bool showpoints = true;
-	f1.y = 300; f1.x = 200;
-	f2.y = 300; f2.x = 500;
+	bool showhitboxes = true;
+	bool showhurtboxes = false;
 	
-	if(f1.f_sprite != NULL) {
-		DrawChar(&f1,f1.f_sprite,screen);
-	}
-	if(f2.f_sprite != NULL) {
-		DrawChar(&f2,f2.f_hitbox,screen);
-	}
 	if(showpoints){
 		DrawPlayerPoint(&f1);
 		DrawPlayerPoint(&f2);	
 	}
+	
+	if(showhurtboxes){
+		if(f1.f_hurtbox != NULL) {
+			DrawChar(&f1,f1.f_hurtbox,screen);
+		}
+		if(f2.f_hurtbox != NULL) {
+			DrawChar(&f2,f2.f_hurtbox,screen);
+		}
+	}
+	if(showhitboxes){
+		if(f1.f_hitbox != NULL) {
+			DrawChar(&f1,f1.f_hitbox,screen);
+		}
+		if(f2.f_hitbox != NULL) {
+			DrawChar(&f2,f2.f_hitbox,screen);
+		}
+	}
+	if(showsprites){
+		if(f1.f_sprite != NULL) {
+			DrawChar(&f1,f1.f_sprite,screen);
+		}
+		if(f2.f_sprite != NULL) {
+			DrawChar(&f2,f2.f_sprite,screen);
+		}
+	}
+	UpdateFrame(&f1);
+	UpdateFrame(&f2);
 }
 
 void DrawChar(Fighter* f, Sprite* spr, SDL_Surface* screen){
-
 	DrawSprite(spr,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
+}
+void UpdateFrame(Fighter* f){
 	f->frame = (((f->frame + 1)%(f->anim_length))+f->anim_seed);
-
 }
 
 void InitFighters()
@@ -145,11 +181,26 @@ void FighterControl(Uint8* keys){
 	int keyn;
 	keys = SDL_GetKeyState(&keyn);
 
-	if(keys[SDLK_w])
+	if(keys[SDLK_d])
 		f1.x += 5;
+	if(keys[SDLK_a])
+		f1.x-=5;
+	if(keys[SDLK_w])
+		Jump(&f1);
+
+	if(keys[SDLK_LEFT])
+		f2.x -= 5;
+	if(keys[SDLK_RIGHT])
+		f2.x += 5;
+	if(keys[SDLK_UP])
+		Jump(&f2);
+
+
 	if(keys[SDLK_x]){
 		ChangeState(&f1,ATK_N_P);
 	}
+	else if(keys[SDLK_q])
+		ChangeState(&f1,IDLE);
 }
 
 void Update_All()
@@ -164,7 +215,23 @@ void Update_All()
 void ChangeState(Fighter* f, State_T st){
 	if(f->state != st){
 		f->state = st;
+		if(st == ATK_N_P){
 		f->anim_seed = 20;
-		f->anim_length = 3;
+		f->anim_length = 4;
+		}
+		if(st==IDLE){
+			f->anim_length = 10;
+			f->anim_seed = 0;
+		
+		}
+		f->frame = 0;
 	}
+
 }
+
+void Jump(Fighter* f){
+	f->state = JUMP_G_N;
+	f->vy = -20;
+	f->grounded = false;
+}
+
