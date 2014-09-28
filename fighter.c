@@ -101,8 +101,9 @@ void FighterThink(Fighter *f){
 void FighterUpdate(Fighter *f){
 	
 	if(!f->grounded){
-		if(f->y > FLOOR){
+		if(f->y+f->vy > FLOOR){
 			f->y = FLOOR;
+			f->vy = 0;
 			f->grounded = true;
 		}
 		else{
@@ -111,7 +112,9 @@ void FighterUpdate(Fighter *f){
 		}
 	}
 
-	if(f->y < 1) f->y = 1;
+	if(f->x < 1) f->x = 1;
+	if(f->x > 1024) f->x = 1024;
+	if(f->y < 1){ f->y = 1; f->vy = 0;}
 }
 
 void ClearFighter(Fighter *f){
@@ -123,7 +126,7 @@ void ClearFighter(Fighter *f){
 
 void DrawFighters(SDL_Surface* screen)
 {
-	bool showsprites = false;
+	bool showsprites = true;
 	bool showpoints = true;
 	bool showhitboxes = true;
 	bool showhurtboxes = false;
@@ -166,6 +169,8 @@ void DrawChar(Fighter* f, Sprite* spr, SDL_Surface* screen){
 }
 void UpdateFrame(Fighter* f){
 	f->frame = (((f->frame + 1)%(f->anim_length))+f->anim_seed);
+	if(f->frame+1 >= (f->anim_length+f->anim_seed))
+		ChangeState(f,IDLE);
 }
 
 void InitFighters()
@@ -216,22 +221,24 @@ void ChangeState(Fighter* f, State_T st){
 	if(f->state != st){
 		f->state = st;
 		if(st == ATK_N_P){
-		f->anim_seed = 20;
-		f->anim_length = 4;
+			f->anim_seed = 20;
+			f->anim_length = 4;
 		}
 		if(st==IDLE){
 			f->anim_length = 10;
 			f->anim_seed = 0;
 		
 		}
-		f->frame = 0;
+		f->frame = f->anim_seed;
 	}
 
 }
 
 void Jump(Fighter* f){
-	f->state = JUMP_G_N;
-	f->vy = -20;
-	f->grounded = false;
+	if(f->grounded){
+		f->state = JUMP_G_N;
+		f->vy = -20;
+		f->grounded = false;
+	}
 }
 
