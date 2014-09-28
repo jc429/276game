@@ -4,6 +4,7 @@
 #include "graphics.h"
 
 typedef struct Fighter_T{
+	Fighter_T* opponent;
 // Animation
 	int t_width,t_height,t_per_row;
 	Sprite* f_sprite; //the actual graphics of the fighter (the part that will be visible during normal gameplay)
@@ -170,5 +171,9 @@ void Jump(Fighter* f);
 
 void Update_All();
 
+void CollisionCheck(Fighter* f);
 
+
+Uint16 Min(Uint16 a, Uint16 b);
+Uint16 Max(Uint16 a, Uint16 b);
 #endif

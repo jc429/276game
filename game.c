@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
     ResetBuffer ();
 	//draw everything else
 	FighterControl(keys);
-
 	Update_All();
 	DrawFighters(screen);
     DrawMouse();

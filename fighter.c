@@ -94,7 +94,7 @@ void LoadFighter(Fighter* f, Character_T c){
 }
 
 void FighterThink(Fighter *f){
-
+	CollisionCheck(f);
 }
 
 
@@ -131,10 +131,7 @@ void DrawFighters(SDL_Surface* screen)
 	bool showhitboxes = true;
 	bool showhurtboxes = false;
 	
-	if(showpoints){
-		DrawPlayerPoint(&f1);
-		DrawPlayerPoint(&f2);	
-	}
+	
 	
 	if(showhurtboxes){
 		if(f1.f_hurtbox != NULL) {
@@ -160,6 +157,12 @@ void DrawFighters(SDL_Surface* screen)
 			DrawChar(&f2,f2.f_sprite,screen);
 		}
 	}
+
+	if(showpoints){
+		DrawPlayerPoint(&f1);
+		DrawPlayerPoint(&f2);	
+	}
+
 	UpdateFrame(&f1);
 	UpdateFrame(&f2);
 }
@@ -177,6 +180,8 @@ void InitFighters()
 {
 	LoadFighter(&f1,DOOM);
 	LoadFighter(&f2,NOTDOOM);
+	f1.opponent = &f2;
+	f2.opponent = &f1;
 	//f1.fsprite = LoadSprite("images/idoom.png",180, 150, 10);
 	
 }
@@ -214,20 +219,22 @@ void Update_All()
 	FighterThink(&f2);
 	FighterUpdate(&f1);
 	FighterUpdate(&f2);
-	
 }
 
 void ChangeState(Fighter* f, State_T st){
 	if(f->state != st){
 		f->state = st;
+		if(st == HIT){
+			f->anim_seed = 24;
+			f->anim_length = 1;
+		}
 		if(st == ATK_N_P){
 			f->anim_seed = 20;
 			f->anim_length = 4;
 		}
 		if(st==IDLE){
-			f->anim_length = 10;
 			f->anim_seed = 0;
-		
+			f->anim_length = 10;	
 		}
 		f->frame = f->anim_seed;
 	}

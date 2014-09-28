@@ -90,5 +90,6 @@ void NextFrame();
 void InitMouse();
 void DrawMouse();
 
+void DrawPoint(int x, int y);
 
 #endif

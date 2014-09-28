@@ -790,3 +790,10 @@ void DrawPlayerPoint(Fighter* f){
 	DrawPixel(screen,255,255,0,x,y+1);
 
 }
+
+void DrawPoint(int x, int y){
+	DrawPixel(screen,255,0,0,x,y);
+}
+
+
+
