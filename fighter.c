@@ -68,10 +68,17 @@ void LoadFighter(Fighter* f, Character_T c){
 		}
 		fclose(fileptr);
 
+		f->healthmax = 400;
+
+
+
+
+
 		f->anim_length = 10;
 		f->anim_seed = 0;
 		f->frame = 0;
 		f->grounded = true;
+		f->health = f->healthmax;
 		
 	}
 
@@ -95,6 +102,7 @@ void LoadFighter(Fighter* f, Character_T c){
 
 void FighterThink(Fighter *f){
 	CollisionCheck(f);
+//	f2.health--;
 }
 
 
@@ -162,6 +170,8 @@ void DrawFighters(SDL_Surface* screen)
 		DrawPlayerPoint(&f1);
 		DrawPlayerPoint(&f2);	
 	}
+
+	DrawMeters(&f1,&f2);
 
 	UpdateFrame(&f1);
 	UpdateFrame(&f2);

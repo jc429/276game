@@ -164,6 +164,7 @@ void FighterUpdate(Fighter*);
 void FighterControl(Uint8* keys);
 
 void DrawPlayerPoint(Fighter* f);
+void DrawMeters(Fighter* f1,Fighter* f2);
 
 void ChangeState(Fighter* f, State_T state);
 

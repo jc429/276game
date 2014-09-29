@@ -92,4 +92,7 @@ void DrawMouse();
 
 void DrawPoint(int x, int y);
 
+void GetDamageInfo(SDL_Rect* r);
+
+
 #endif

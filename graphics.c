@@ -795,5 +795,31 @@ void DrawPoint(int x, int y){
 	DrawPixel(screen,255,0,0,x,y);
 }
 
+void GetDamageInfo(SDL_Rect* r){
+	for(int i = 0; i < r->w; i++){
+		for(int j = 0; j < r->h; j++){
+			Uint32 pxl = getpixel(screen,(r->x+i),(r->y+j));
+			
+		}
+	}
 
+}
 
+void DrawMeters(Fighter* f1,Fighter* f2){
+	int HPloc_y = 100;
+	int HPoff_x = 100;//x offset from middle
+	int HPlen = 400;
+	int HPht = 10;
+	for(int i=0;i<HPlen;i++){
+		for(int j=0;j<HPht;j++){
+			if(i < f1->health)
+				DrawPixel(screen,200,200,0,(512-HPoff_x-i+j),HPloc_y+j);
+			else
+				DrawPixel(screen,255,80,80,(512-HPoff_x-i+j),HPloc_y+j);
+			if(i < f2->health)
+				DrawPixel(screen,200,200,0,(512+HPoff_x+i-j),HPloc_y+j);
+			else
+				DrawPixel(screen,255,80,80,(512+HPoff_x+i-j),HPloc_y+j);
+		}
+	}
+}
