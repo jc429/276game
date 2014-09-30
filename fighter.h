@@ -174,6 +174,7 @@ void Update_All();
 
 void CollisionCheck(Fighter* f);
 
+void TakeHit(Fighter* f, int dmg, int kback, int stun);
 
 Uint16 Min(Uint16 a, Uint16 b);
 Uint16 Max(Uint16 a, Uint16 b);

@@ -822,4 +822,5 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 				DrawPixel(screen,255,80,80,(512+HPoff_x+i-j),HPloc_y+j);
 		}
 	}
+
 }

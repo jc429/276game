@@ -101,8 +101,19 @@ void LoadFighter(Fighter* f, Character_T c){
 }
 
 void FighterThink(Fighter *f){
+	if(f->state!=HIT&&f->hitstun>0)
+		ChangeState(f,HIT);
+
 	CollisionCheck(f);
+	if(f->x < f->opponent->x)
+		f->facing = 1;
+	else if(f->x > f->opponent->x)
+		f->facing = -1;
 //	f2.health--;
+	if(f->hitstun>=0)
+		f->hitstun--;
+	//if(f->hitstun=0)
+		
 }
 
 
@@ -259,3 +270,7 @@ void Jump(Fighter* f){
 	}
 }
 
+void TakeHit(Fighter* f, int dmg, int kback, int stun){
+	f->health -= dmg;
+	f->hitstun = stun;
+}
