@@ -153,6 +153,8 @@ void InitFighters();
 
 void MakeFighter();
 void DrawFighters(SDL_Surface* screen);
+void DrawHitboxes(SDL_Surface* screen);
+void DrawHurtboxes(SDL_Surface* screen);
 void DrawChar(Fighter* f,Sprite* spr,SDL_Surface* screen);
 void UpdateFrame(Fighter* f);
 void LoadFighter(Fighter*,Character_T);

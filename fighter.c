@@ -103,6 +103,8 @@ void LoadFighter(Fighter* f, Character_T c){
 void FighterThink(Fighter *f){
 	if(f->state!=HIT&&f->hitstun>0)
 		ChangeState(f,HIT);
+	if(f->state!=HIT)
+		UpdateFrame(f);
 
 	CollisionCheck(f);
 	if(f->x < f->opponent->x)
@@ -112,6 +114,8 @@ void FighterThink(Fighter *f){
 //	f2.health--;
 	if(f->hitstun>=0)
 		f->hitstun--;
+	else if(f->state==HIT)
+		ChangeState(f,IDLE);
 	//if(f->hitstun=0)
 		
 }
@@ -143,37 +147,21 @@ void ClearFighter(Fighter *f){
 }
 
 
-void DrawFighters(SDL_Surface* screen)
+void DrawFighters(SDL_Surface* surf)
 {
 	bool showsprites = true;
 	bool showpoints = true;
-	bool showhitboxes = true;
-	bool showhurtboxes = false;
 	
 	
 	
-	if(showhurtboxes){
-		if(f1.f_hurtbox != NULL) {
-			DrawChar(&f1,f1.f_hurtbox,screen);
-		}
-		if(f2.f_hurtbox != NULL) {
-			DrawChar(&f2,f2.f_hurtbox,screen);
-		}
-	}
-	if(showhitboxes){
-		if(f1.f_hitbox != NULL) {
-			DrawChar(&f1,f1.f_hitbox,screen);
-		}
-		if(f2.f_hitbox != NULL) {
-			DrawChar(&f2,f2.f_hitbox,screen);
-		}
-	}
+	
+	
 	if(showsprites){
 		if(f1.f_sprite != NULL) {
-			DrawChar(&f1,f1.f_sprite,screen);
+			DrawChar(&f1,f1.f_sprite,surf);
 		}
 		if(f2.f_sprite != NULL) {
-			DrawChar(&f2,f2.f_sprite,screen);
+			DrawChar(&f2,f2.f_sprite,surf);
 		}
 	}
 
@@ -182,10 +170,30 @@ void DrawFighters(SDL_Surface* screen)
 		DrawPlayerPoint(&f2);	
 	}
 
-	DrawMeters(&f1,&f2);
-
-	UpdateFrame(&f1);
-	UpdateFrame(&f2);
+	
+}
+void DrawHitboxes(SDL_Surface* surf){
+	
+	bool showhitboxes = true;
+	if(showhitboxes){
+		if(f1.f_hitbox != NULL) {
+			DrawChar(&f1,f1.f_hitbox,surf);
+		}
+		if(f2.f_hitbox != NULL) {
+			DrawChar(&f2,f2.f_hitbox,surf);
+		}
+	}
+}
+void DrawHurtboxes(SDL_Surface* surf){
+	bool showhurtboxes = true;
+	if(showhurtboxes){
+		if(f1.f_hurtbox != NULL) {
+			DrawChar(&f1,f1.f_hurtbox,surf);
+		}
+		if(f2.f_hurtbox != NULL) {
+			DrawChar(&f2,f2.f_hurtbox,surf);
+		}
+	}
 }
 
 void DrawChar(Fighter* f, Sprite* spr, SDL_Surface* screen){
@@ -240,6 +248,9 @@ void Update_All()
 	FighterThink(&f2);
 	FighterUpdate(&f1);
 	FighterUpdate(&f2);
+	DrawMeters(&f1,&f2);
+
+	
 }
 
 void ChangeState(Fighter* f, State_T st){

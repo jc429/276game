@@ -16,6 +16,8 @@ struct
 }Mouse;
 
 SDL_Surface *screen; /*pointer to the draw buffer*/
+SDL_Surface *hitsurf; /*hitbox surface*/
+SDL_Surface *hurtsurf; /*hurtbox surface*/
 SDL_Surface *buffer; /*pointer to the background image buffer*/
 SDL_Surface *videobuffer; /*pointer to the actual video surface*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
@@ -93,6 +95,8 @@ void Init_Graphics()
 	  }
     /* Just to make sure that the surface we create is compatible with the screen*/
     screen = SDL_DisplayFormat(temp);
+	hitsurf = SDL_DisplayFormat(temp);
+	hurtsurf = SDL_DisplayFormat(temp);
     SDL_FreeSurface(temp);
     temp = SDL_CreateRGBSurface(Vflags, 2048, 768, S_Data.depth,rmask, gmask,bmask,amask);
     if(temp == NULL)
@@ -114,6 +118,8 @@ void Init_Graphics()
 void ResetBuffer()
 {
     SDL_BlitSurface(buffer,&Camera,screen,NULL);
+    SDL_BlitSurface(buffer,&Camera,hitsurf,NULL);
+    SDL_BlitSurface(buffer,&Camera,hurtsurf,NULL);
 }
 
 void NextFrame()
@@ -123,7 +129,8 @@ void NextFrame()
   SDL_Flip(videobuffer);							/*and then update the screen*/
   Then = NOW;									/*these next few lines  are used to show how long each frame takes to update.  */
   NOW = SDL_GetTicks();
-  fprintf(stdout,"Ticks passed this frame: %i\n", NOW - Then);
+
+ // fprintf(stdout,"Ticks passed this frame: %i\n", NOW - Then);
   FrameDelay(66); /* 33 will make your frame rate about 30 frames per second.  If you want 60 fps then set it to about 17*/
 }
 
@@ -796,12 +803,30 @@ void DrawPoint(int x, int y){
 }
 
 void GetDamageInfo(SDL_Rect* r){
-	for(int i = 0; i < r->w; i++){
-		for(int j = 0; j < r->h; j++){
-			Uint32 pxl = getpixel(screen,(r->x+i),(r->y+j));
-			
+	Uint32 bestpx = 0;
+	for(int i = 0; i < r->w; i++)
+	{
+		for(int j = 0; j < r->h; j++)
+		{
+			Uint32 pxl = getpixel(hitsurf,(r->x+i),(r->y+j));
+			Uint8 alpha = (bestpx & 0xff000000) >> 6;
+			Uint8 blue = (bestpx & 0x00ff0000) >> 4;
+			Uint8 green = (bestpx & 0x0000ff00) >> 2;
+			Uint8 red = (bestpx & 0x000000ff);
+
+			if(pxl > bestpx) bestpx=pxl;
 		}
 	}
+	Uint8 red = (bestpx & 0x000000ff);
+	Uint8 green = (bestpx & 0x0000ff00) >> 2;
+	Uint8 blue = (bestpx & 0x00ff0000) >> 4;
+	Uint8 alpha = (bestpx & 0xff000000) >> 6;
+	
+	fprintf(stdout,"Red: %u\n", red);
+	fprintf(stdout,"Grn: %u\n", green);
+	fprintf(stdout,"Blu: %u\n", blue);
+	fprintf(stdout,"Alpha: %u\n", alpha);
+	fprintf(stdout,"pixel %u\n", bestpx);
 
 }
 
