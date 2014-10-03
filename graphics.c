@@ -776,17 +776,6 @@ void DrawMouse()
 }
 
 
-
-/*  FighterThink(&f1);
-	FighterThink(&f2);
-	FighterUpdate(&f1);
-	FighterUpdate(&f2);
-	*/
-
-
-
-
-
 void DrawPlayerPoint(Fighter* f){
 	int x = f->x;
 	int y = f->y;
@@ -801,34 +790,39 @@ void DrawPlayerPoint(Fighter* f){
 void DrawPoint(int x, int y){
 	DrawPixel(screen,255,0,0,x,y);
 }
-
-void GetDamageInfo(SDL_Rect* r){
+/*
+void GetDamageInfo(Fighter* f,SDL_Rect* r){
+	//SDL_BlitSurface(hitsurf,NULL,buffer,NULL);
 	Uint32 bestpx = 0;
 	for(int i = 0; i < r->w; i++)
 	{
-		for(int j = 0; j < r->h; j++)
+		for(int j = 0; j <  r->h; j++)
 		{
-			Uint32 pxl = getpixel(hitsurf,(r->x+i),(r->y+j));
-			Uint8 alpha = (bestpx & 0xff000000) >> 6;
-			Uint8 blue = (bestpx & 0x00ff0000) >> 4;
-			Uint8 green = (bestpx & 0x0000ff00) >> 2;
-			Uint8 red = (bestpx & 0x000000ff);
-
-			if(pxl > bestpx) bestpx=pxl;
+			int getx = i+(f->t_height*(f->frame%f->t_per_row));
+			int gety = j+(f->t_height*(f->frame/f->t_per_row));
+			Uint32 pxl;
+			pxl = getpixel(f->f_hitbox->image,getx,gety);
+			//(r->x+i),(r->y+j)); oh god this works now just find the right position thank you Bo
+			if((pxl & 0x00ff0000) >> 16>(bestpx & 0x00ff0000) >> 16)
+				bestpx = pxl;
 		}
 	}
-	Uint8 red = (bestpx & 0x000000ff);
-	Uint8 green = (bestpx & 0x0000ff00) >> 2;
-	Uint8 blue = (bestpx & 0x00ff0000) >> 4;
-	Uint8 alpha = (bestpx & 0xff000000) >> 6;
-	
+	//bestpx = 0xff00ffff;
+	/*??????????????????????????????????????????????????????
+	Uint8 blue = (bestpx & 0x000000ff);		
+	Uint8 green = (bestpx & 0x0000ff00)>> 8;
+	Uint8 red = (bestpx & 0x00ff0000) >> 16;
+	Uint8 alpha = (bestpx & 0xff000000) >> 24;
+
+
+
 	fprintf(stdout,"Red: %u\n", red);
 	fprintf(stdout,"Grn: %u\n", green);
 	fprintf(stdout,"Blu: %u\n", blue);
 	fprintf(stdout,"Alpha: %u\n", alpha);
 	fprintf(stdout,"pixel %u\n", bestpx);
-
-}
+	/*??????????????????????????????????????????????????????
+}*/
 
 void DrawMeters(Fighter* f1,Fighter* f2){
 	int HPloc_y = 100;

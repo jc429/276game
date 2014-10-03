@@ -94,7 +94,5 @@ Uint32 getpixel(SDL_Surface *surface, int x, int y);
 
 void DrawPoint(int x, int y);
 
-void GetDamageInfo(SDL_Rect* r);
-
 
 #endif

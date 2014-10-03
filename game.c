@@ -37,14 +37,15 @@ int main(int argc, char *argv[])
   if(temp != NULL)						/*ALWAYS check your pointers before you use them*/
     bg = SDL_DisplayFormat(temp);
   SDL_FreeSurface(temp);
-  //if(bg != NULL)
-   // SDL_BlitSurface(bg,NULL,buffer,NULL);
+  if(bg != NULL)
+    SDL_BlitSurface(bg,NULL,buffer,NULL);
 
   //tile = LoadSprite("images/tile.png",32,32,16);
  /* if(tile != NULL)for(i = 0;i < 12;i++)
   {
     DrawSprite(tile,buffer,i * tile->w,0,0);
   }*/
+//  BlankScreen(buffer,0x88000000);
   done = 0;
   do
   {
@@ -53,8 +54,9 @@ int main(int argc, char *argv[])
 	FighterControl(keys);
 	Update_All();
 	DrawFighters(screen);
-	DrawHitboxes(hitsurf);
-	DrawHurtboxes(hurtsurf);
+//	DrawHitboxes(hitsurf);
+	//SDL_BlitSurface(hitsurf,NULL,buffer,NULL);
+//	DrawHurtboxes(hurtsurf);
     DrawMouse();
     NextFrame();
 	SDL_PumpEvents();

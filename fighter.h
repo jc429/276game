@@ -23,7 +23,7 @@ typedef struct Fighter_T{
 	int vx,vy;			//x/y velocity
 	int accx,accy;
 // Movement
-	bool grounded;
+	int grounded;
 	int jumptimer;	//used to prevent wasting all jumps immediately
 	int hasjump;	//number of jumps remaining before you have to land
 	int maxjumps;	//total number of jumps available
@@ -175,6 +175,7 @@ void Jump(Fighter* f);
 void Update_All();
 
 void CollisionCheck(Fighter* f);
+
 
 void TakeHit(Fighter* f, int dmg, int kback, int stun);
 

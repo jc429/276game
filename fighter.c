@@ -16,10 +16,8 @@ void LoadFighter(Fighter* f, Character_T c){
 	if(c==DOOM)
 		filepath = "res/chr/doom.txt";
 	else
-		filepath = "res/chr/doom.txt";
+		filepath = "res/chr/nodoom.txt";
 	///////////////////////////////////////////////
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////this is a mess 
 	{ ///file loader/////
@@ -47,6 +45,14 @@ void LoadFighter(Fighter* f, Character_T c){
 				fscanf(fileptr,"%i",&f->t_per_row);
 				fscanf(fileptr,"%s",buf);
 			}
+			if(strcmp(buf,"x_offset:")==0){
+				fscanf(fileptr,"%i",&f->x_off);
+				fscanf(fileptr,"%s",buf);
+			}
+			if(strcmp(buf,"y_offset:")==0){
+				fscanf(fileptr,"%i",&f->y_off);
+				fscanf(fileptr,"%s",buf);
+			}
 			if(strcmp(buf,"sprite:")==0){
 				fscanf(fileptr,"%s",buf);
 				//spritepath = buf;		
@@ -64,11 +70,18 @@ void LoadFighter(Fighter* f, Character_T c){
 				fscanf(fileptr,"%s",buf);
 				f->f_hurtbox = LoadSprite(buf,f->t_width, f->t_height, f->t_per_row);
 				if(f->f_hurtbox == NULL)fprintf(stdout,"FATAL ERROR: Couldn't load hurtboxes\n");
+				fscanf(fileptr,"%s",buf);
+
 			}
+			if(strcmp(buf,"healthmax:")==0){
+				fscanf(fileptr,"%i",&f->healthmax);
+				fscanf(fileptr,"%s",buf);
+			}
+
 		}
 		fclose(fileptr);
 
-		f->healthmax = 400;
+	//	f->healthmax = 400;
 
 
 
@@ -77,7 +90,7 @@ void LoadFighter(Fighter* f, Character_T c){
 		f->anim_length = 10;
 		f->anim_seed = 0;
 		f->frame = 0;
-		f->grounded = true;
+		f->grounded = 1;
 		f->health = f->healthmax;
 		
 	}
@@ -91,13 +104,10 @@ void LoadFighter(Fighter* f, Character_T c){
 	
 	
 
-	f->x_off = 90;
-	f->y_off = 130;
-
 	f->y = FLOOR;
 
 	f1.x = 200;
-	f2.x = 500;
+	f2.x = 300;
 }
 
 void FighterThink(Fighter *f){
@@ -105,8 +115,8 @@ void FighterThink(Fighter *f){
 		ChangeState(f,HIT);
 	if(f->state!=HIT)
 		UpdateFrame(f);
-
-	CollisionCheck(f);
+	if(f->state==ATK_N_P)
+		CollisionCheck(f);
 	if(f->x < f->opponent->x)
 		f->facing = 1;
 	else if(f->x > f->opponent->x)
@@ -127,7 +137,7 @@ void FighterUpdate(Fighter *f){
 		if(f->y+f->vy > FLOOR){
 			f->y = FLOOR;
 			f->vy = 0;
-			f->grounded = true;
+			f->grounded = 1;
 		}
 		else{
 			f->y += f->vy;
@@ -149,8 +159,8 @@ void ClearFighter(Fighter *f){
 
 void DrawFighters(SDL_Surface* surf)
 {
-	bool showsprites = true;
-	bool showpoints = true;
+	int showsprites = 1;
+	int showpoints = 1;
 	
 	
 	
@@ -174,7 +184,7 @@ void DrawFighters(SDL_Surface* surf)
 }
 void DrawHitboxes(SDL_Surface* surf){
 	
-	bool showhitboxes = true;
+	int showhitboxes = 1;
 	if(showhitboxes){
 		if(f1.f_hitbox != NULL) {
 			DrawChar(&f1,f1.f_hitbox,surf);
@@ -185,7 +195,7 @@ void DrawHitboxes(SDL_Surface* surf){
 	}
 }
 void DrawHurtboxes(SDL_Surface* surf){
-	bool showhurtboxes = true;
+	int showhurtboxes = 1;
 	if(showhurtboxes){
 		if(f1.f_hurtbox != NULL) {
 			DrawChar(&f1,f1.f_hurtbox,surf);
@@ -208,7 +218,7 @@ void UpdateFrame(Fighter* f){
 void InitFighters()
 {
 	LoadFighter(&f1,DOOM);
-	LoadFighter(&f2,NOTDOOM);
+	LoadFighter(&f2,DOOM);
 	f1.opponent = &f2;
 	f2.opponent = &f1;
 	//f1.fsprite = LoadSprite("images/idoom.png",180, 150, 10);
@@ -277,7 +287,7 @@ void Jump(Fighter* f){
 	if(f->grounded){
 		f->state = JUMP_G_N;
 		f->vy = -20;
-		f->grounded = false;
+		f->grounded = 0;
 	}
 }
 
