@@ -111,23 +111,26 @@ void LoadFighter(Fighter* f, Character_T c){
 }
 
 void FighterThink(Fighter *f){
-	if(f->state!=HIT&&f->hitstun>0)
-		ChangeState(f,HIT);
-	if(f->state!=HIT)
-		UpdateFrame(f);
-	if(f->state==ATK_N_P)
-		CollisionCheck(f);
-	if(f->x < f->opponent->x)
-		f->facing = 1;
-	else if(f->x > f->opponent->x)
-		f->facing = -1;
-//	f2.health--;
-	if(f->hitstun>=0)
-		f->hitstun--;
-	else if(f->state==HIT)
-		ChangeState(f,IDLE);
+	if(f->health<=0)
+		Die(f);
+	else{
+		if(f->state!=HIT&&f->hitstun>0)
+			ChangeState(f,HIT);
+		if(f->state!=HIT)
+			UpdateFrame(f);
+		if(f->state==ATK_N_P)
+			CollisionCheck(f);
+		if(f->x < f->opponent->x)
+			f->facing = 1;
+		else if(f->x > f->opponent->x)
+			f->facing = -1;
+	//	f2.health--;
+		if(f->hitstun>=0)
+			f->hitstun--;
+		else if(f->state==HIT)
+			ChangeState(f,IDLE);
 	//if(f->hitstun=0)
-		
+	}
 }
 
 
@@ -266,17 +269,23 @@ void Update_All()
 void ChangeState(Fighter* f, State_T st){
 	if(f->state != st){
 		f->state = st;
-		if(st == HIT){
-			f->anim_seed = 24;
-			f->anim_length = 1;
-		}
-		if(st == ATK_N_P){
-			f->anim_seed = 20;
-			f->anim_length = 4;
-		}
-		if(st==IDLE){
-			f->anim_seed = 0;
-			f->anim_length = 10;	
+		switch(st)
+		{ /*fill with values from a config file later*/
+			case HIT:
+				f->anim_seed = 24;
+				f->anim_length = 1;
+				break;
+			case ATK_N_P:
+				f->anim_seed = 20;
+				f->anim_length = 4;
+				break;
+			case IDLE:
+				f->anim_seed = 0;
+				f->anim_length = 10;	
+				break;
+			case DEAD:
+				f->anim_seed = 25;
+				f->anim_length = 1;
 		}
 		f->frame = f->anim_seed;
 	}
@@ -294,4 +303,9 @@ void Jump(Fighter* f){
 void TakeHit(Fighter* f, int dmg, int kback, int stun){
 	f->health -= dmg;
 	f->hitstun = stun;
+//	f->y-=2;
+}
+
+void Die(Fighter* f){
+	ChangeState(f,DEAD);
 }

@@ -6,8 +6,6 @@
 #include <glib.h>
 
 extern SDL_Surface *screen;
-extern SDL_Surface *hitsurf; /*hitbox surface*/
-extern SDL_Surface *hurtsurf; /*hurtbox surface*/
 extern SDL_Surface *buffer; /*pointer to the draw buffer*/
 extern SDL_Rect Camera;
 
@@ -24,12 +22,7 @@ int main(int argc, char *argv[])
   int done;
   int keyn;
 
-//  Fighter* f1;
-  //Fighter* f2;
- // Fighter f1, f2;
- // MakeFighter();
 
-  int i;
   int mx,my;
   Uint8 *keys;
   Init_All();
@@ -40,23 +33,17 @@ int main(int argc, char *argv[])
   if(bg != NULL)
     SDL_BlitSurface(bg,NULL,buffer,NULL);
 
-  //tile = LoadSprite("images/tile.png",32,32,16);
- /* if(tile != NULL)for(i = 0;i < 12;i++)
-  {
-    DrawSprite(tile,buffer,i * tile->w,0,0);
-  }*/
-//  BlankScreen(buffer,0x88000000);
+
   done = 0;
   do
   {
     ResetBuffer ();
-	//draw everything else
+
 	FighterControl(keys);
 	Update_All();
+//	DrawHurtboxes(screen);
 	DrawFighters(screen);
-//	DrawHitboxes(hitsurf);
-	//SDL_BlitSurface(hitsurf,NULL,buffer,NULL);
-//	DrawHurtboxes(hurtsurf);
+//	DrawHitboxes(screen);
     DrawMouse();
     NextFrame();
 	SDL_PumpEvents();

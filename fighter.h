@@ -133,6 +133,7 @@ typedef enum{
 
 	//OTHER
 	HIT,
+	DEAD,
 	BLOCKING,
 	BLOCKING_CR,
 	PUSHBLOCK,			//will this even have pushblock?
@@ -178,6 +179,7 @@ void CollisionCheck(Fighter* f);
 
 
 void TakeHit(Fighter* f, int dmg, int kback, int stun);
+void Die(Fighter* f);
 
 Uint16 Min(Uint16 a, Uint16 b);
 Uint16 Max(Uint16 a, Uint16 b);

@@ -16,8 +16,6 @@ struct
 }Mouse;
 
 SDL_Surface *screen; /*pointer to the draw buffer*/
-SDL_Surface *hitsurf; /*hitbox surface*/
-SDL_Surface *hurtsurf; /*hurtbox surface*/
 SDL_Surface *buffer; /*pointer to the background image buffer*/
 SDL_Surface *videobuffer; /*pointer to the actual video surface*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
@@ -95,8 +93,6 @@ void Init_Graphics()
 	  }
     /* Just to make sure that the surface we create is compatible with the screen*/
     screen = SDL_DisplayFormat(temp);
-	hitsurf = SDL_DisplayFormat(temp);
-	hurtsurf = SDL_DisplayFormat(temp);
     SDL_FreeSurface(temp);
     temp = SDL_CreateRGBSurface(Vflags, 2048, 768, S_Data.depth,rmask, gmask,bmask,amask);
     if(temp == NULL)
@@ -118,8 +114,6 @@ void Init_Graphics()
 void ResetBuffer()
 {
     SDL_BlitSurface(buffer,&Camera,screen,NULL);
-    SDL_BlitSurface(buffer,&Camera,hitsurf,NULL);
-    SDL_BlitSurface(buffer,&Camera,hurtsurf,NULL);
 }
 
 void NextFrame()
