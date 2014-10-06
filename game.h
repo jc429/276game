@@ -1,7 +1,23 @@
 #ifndef __GAME__
 #define __GAME__
 
-//typedef enum { false, true } bool;
+#include <stdlib.h>
+#include "SDL.h"
+#include "SDL_image.h"
+#include "graphics.h"
+#include "fighter.h"
+#include "stage.h"
+#include <glib.h>
 
+typedef enum{
+	MAIN_MENU,
+	C_SELECT,
+	S_SELECT,
+	OPTIONS,
+	VERSUS,
+	PAUSE
+}GameState_T;
+
+GameState_T GameState;
 
 #endif

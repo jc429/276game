@@ -33,7 +33,7 @@ ScreenData  S_Data;
 
 void Init_Graphics()
 {
-    Uint32 Vflags = SDL_FULLSCREEN | SDL_ANYFORMAT;
+    Uint32 Vflags = /*SDL_FULLSCREEN |*/ SDL_ANYFORMAT;
     Uint32 HWflag = 0;
     SDL_Surface *temp;
     S_Data.xres = XRES;
@@ -55,15 +55,15 @@ void Init_Graphics()
         exit(1);
     }
     atexit(SDL_Quit);
-    if(SDL_VideoModeOK(XRES, YRES, 32, SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE))
+    if(SDL_VideoModeOK(XRES, YRES, 32, /*SDL_FULLSCREEN |*/ SDL_ANYFORMAT | SDL_HWSURFACE))
     {
         S_Data.xres = XRES;
         S_Data.yres = YRES;
         S_Data.depth = 32;
-        Vflags = SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE;
+        Vflags = /*SDL_FULLSCREEN |*/ SDL_ANYFORMAT | SDL_HWSURFACE;
         HWflag = SDL_HWSURFACE;
     }
-    else if(SDL_VideoModeOK(XRES, YRES, 16, SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE))
+    else if(SDL_VideoModeOK(XRES, YRES, 16, /*SDL_FULLSCREEN |*/ SDL_ANYFORMAT | SDL_HWSURFACE))
     {
         S_Data.xres = XRES;
         S_Data.yres = YRES;
@@ -71,7 +71,7 @@ void Init_Graphics()
         Vflags = SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_HWSURFACE;
         HWflag = SDL_HWSURFACE;
     }
-    else if(SDL_VideoModeOK(XRES, YRES, 16, SDL_FULLSCREEN | SDL_ANYFORMAT))
+    else if(SDL_VideoModeOK(XRES, YRES, 16, /*SDL_FULLSCREEN |*/ SDL_ANYFORMAT))
     {
         S_Data.xres = XRES;
         S_Data.yres = YRES;
@@ -124,8 +124,8 @@ void NextFrame()
   Then = NOW;									/*these next few lines  are used to show how long each frame takes to update.  */
   NOW = SDL_GetTicks();
 
- // fprintf(stdout,"Ticks passed this frame: %i\n", NOW - Then);
-  FrameDelay(66); /* 33 will make your frame rate about 30 frames per second.  If you want 60 fps then set it to about 17*/
+  //fprintf(stdout,"Ticks passed this frame: %i\n", NOW - Then);
+  FrameDelay(50); /* 33 will make your frame rate about 30 frames per second.  If you want 60 fps then set it to about 17*/
 }
 
 /*
@@ -784,39 +784,7 @@ void DrawPlayerPoint(Fighter* f){
 void DrawPoint(int x, int y){
 	DrawPixel(screen,255,0,0,x,y);
 }
-/*
-void GetDamageInfo(Fighter* f,SDL_Rect* r){
-	//SDL_BlitSurface(hitsurf,NULL,buffer,NULL);
-	Uint32 bestpx = 0;
-	for(int i = 0; i < r->w; i++)
-	{
-		for(int j = 0; j <  r->h; j++)
-		{
-			int getx = i+(f->t_height*(f->frame%f->t_per_row));
-			int gety = j+(f->t_height*(f->frame/f->t_per_row));
-			Uint32 pxl;
-			pxl = getpixel(f->f_hitbox->image,getx,gety);
-			//(r->x+i),(r->y+j)); oh god this works now just find the right position thank you Bo
-			if((pxl & 0x00ff0000) >> 16>(bestpx & 0x00ff0000) >> 16)
-				bestpx = pxl;
-		}
-	}
-	//bestpx = 0xff00ffff;
-	/*??????????????????????????????????????????????????????
-	Uint8 blue = (bestpx & 0x000000ff);		
-	Uint8 green = (bestpx & 0x0000ff00)>> 8;
-	Uint8 red = (bestpx & 0x00ff0000) >> 16;
-	Uint8 alpha = (bestpx & 0xff000000) >> 24;
 
-
-
-	fprintf(stdout,"Red: %u\n", red);
-	fprintf(stdout,"Grn: %u\n", green);
-	fprintf(stdout,"Blu: %u\n", blue);
-	fprintf(stdout,"Alpha: %u\n", alpha);
-	fprintf(stdout,"pixel %u\n", bestpx);
-	/*??????????????????????????????????????????????????????
-}*/
 
 void DrawMeters(Fighter* f1,Fighter* f2){
 	int HPloc_y = 100;
@@ -825,6 +793,7 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 	int HPht = 10;
 	for(int i=0;i<HPlen;i++){
 		for(int j=0;j<HPht;j++){
+			/*needs to be replaced with a percentage calculation rather than fixed number*/
 			if(i < f1->health)
 				DrawPixel(screen,200,200,0,(512-HPoff_x-i+j),HPloc_y+j);
 			else
@@ -835,5 +804,4 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 				DrawPixel(screen,255,80,80,(512+HPoff_x+i-j),HPloc_y+j);
 		}
 	}
-
 }

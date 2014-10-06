@@ -88,27 +88,7 @@ typedef enum{
 	AIRDASH_D_B,
 
 	//ATTACKS
-	ATK_N_P,			//neutral,forward,back,down,up + punch button, grounded
-	ATK_F_P,			
-	ATK_B_P,
-	ATK_D_P,
-	ATK_U_P,
-	ATK_N_K,			//neutral,forward,back,down,up + kick button, grounded
-	ATK_F_K,
-	ATK_B_K,
-	ATK_D_K,
-	ATK_U_K,
-	ATK_AIR_N_P,			//neutral,forward,back,down,up + punch button, in air
-	ATK_AIR_F_P,			
-	ATK_AIR_B_P,
-	ATK_AIR_D_P,
-	ATK_AIR_U_P,
-	ATK_AIR_N_K,			//neutral,forward,back,down,up + kick button, in air
-	ATK_AIR_F_K,
-	ATK_AIR_B_K,
-	ATK_AIR_D_K,
-	ATK_AIR_U_K,
-
+	ATTACKING,
 	ATK_CLANK,				//when two hitboxes collide but no hurtboxes do
 	ATK_CLANK_AIR,
 
@@ -150,21 +130,44 @@ typedef enum{
 	TAUNT2
 } State_T;
 
-void InitFighters();
+typedef enum{
+	ATK_N_P,			//neutral,forward,back,down,up + punch button, grounded
+	ATK_F_P,			
+	ATK_B_P,
+	ATK_D_P,
+	ATK_U_P,
+	ATK_N_K,			//neutral,forward,back,down,up + kick button, grounded
+	ATK_F_K,
+	ATK_B_K,
+	ATK_D_K,
+	ATK_U_K,
+	ATK_AIR_N_P,			//neutral,forward,back,down,up + punch button, in air
+	ATK_AIR_F_P,			
+	ATK_AIR_B_P,
+	ATK_AIR_D_P,
+	ATK_AIR_U_P,
+	ATK_AIR_N_K,			//neutral,forward,back,down,up + kick button, in air
+	ATK_AIR_F_K,
+	ATK_AIR_B_K,
+	ATK_AIR_D_K,
+	ATK_AIR_U_K
+}Attack_T;
 
-void MakeFighter();
+void InitFighters();
+void ClearFighter(Fighter* f);
+/*************************************************************/
 void DrawFighters(SDL_Surface* screen);
 void DrawHitboxes(SDL_Surface* screen);
 void DrawHurtboxes(SDL_Surface* screen);
 void DrawChar(Fighter* f,Sprite* spr,SDL_Surface* screen);
 void UpdateFrame(Fighter* f);
 void LoadFighter(Fighter*,Character_T);
-void ClearFighter();
-
+/*************************************************************/
+void FighterControl(Uint8* keys);
+void FighterInputs(Fighter* f,Uint8 inputs);
 void FighterThink(Fighter*);
 void FighterUpdate(Fighter*);
-
-void FighterControl(Uint8* keys);
+/*************************************************************/
 
 void DrawPlayerPoint(Fighter* f);
 void DrawMeters(Fighter* f1,Fighter* f2);
@@ -172,6 +175,7 @@ void DrawMeters(Fighter* f1,Fighter* f2);
 void ChangeState(Fighter* f, State_T state);
 
 void Jump(Fighter* f);
+void Attack(Fighter* f,Attack_T atk);
 
 void Update_All();
 
