@@ -1,18 +1,15 @@
 #include "fighter.h"
 
-#define FLOOR 540
-#define STAGELEFT 220
-#define STAGERIGHT 790
-#define P1SPAWN 250
-#define P2SPAWN 750
 
+extern int STAGEFLOOR,STAGELEFT,STAGERIGHT,P1SPAWN,P2SPAWN;
+extern SDL_Surface *screen; /*pointer to the screen*/
 Fighter f1, f2;
 
 /**************************************************************************************************/
-void InitFighters()
+void InitFighters(Character_T p1, Character_T p2)
 {
-	LoadFighter(&f1,DOOM);
-	LoadFighter(&f2,DOOM);
+	LoadFighter(&f1,p1);
+	LoadFighter(&f2,p2);
 	f1.opponent = &f2;
 	f2.opponent = &f1;	
 }
@@ -158,18 +155,87 @@ void LoadFighter(Fighter* f, Character_T c){
 		
 	}
 
-	f->y = FLOOR;
+	f->y = STAGEFLOOR;
 	f1.x = P1SPAWN;
 	f2.x = P2SPAWN;
 }
 /**************************************************************************************************/
-void FighterControl(Uint8* keys){
-	int keyn;
+void FighterControl(){
 	Uint8 p1input = 00000000; /*lrudabxy - order of buttons mapped to bits*/
 	Uint8 p2input = 00000000;
-	keys = SDL_GetKeyState(&keyn);
 
 	
+	SDL_Event events;
+	Uint8* keys = SDL_GetKeyState(NULL);
+	while(SDL_PollEvent(&events)){
+		switch(events.type){
+			case SDL_KEYDOWN:
+				switch(events.key.keysym.sym){
+				case SDLK_ESCAPE:
+					Quit();
+					break;
+				/*case SDLK_a:
+					p1input |= 1<<7;
+					break;
+				case SDLK_d:
+					p1input |= 1<<6;
+					break;
+				case SDLK_w:
+					p1input |= 1<<5;
+					break;
+				case SDLK_s:
+					p1input |= 1<<4;
+					break;*/
+				case SDLK_z:
+					p1input |= 1<<3;
+					break;
+				case SDLK_x:
+					p1input |= 1<<2;
+					break;
+				case SDLK_c:
+					p1input |= 1<<1;
+					break;
+				case SDLK_v:
+					p1input |= 1;
+					break;
+
+				/*case SDLK_LEFT:
+					p2input |= 1<<7;
+					break;
+				case SDLK_RIGHT:
+					p2input |= 1<<6;
+					break;
+				case SDLK_UP:
+					p2input |= 1<<5;
+					break;
+				case SDLK_DOWN:
+					p2input |= 1<<4;
+					break;*/
+				case SDLK_BACKSLASH:
+					p2input |= 1<<3;
+					break;
+				case SDLK_7:
+					p2input |= 1<<2;
+					break;
+				case SDLK_8:
+					p2input |= 1<<1;
+					break;
+				case SDLK_9:
+					p2input |= 1;
+					break;
+
+
+				
+				
+				}
+				continue;
+			default:
+				continue;
+			
+
+
+		}
+	}
 	if(keys[SDLK_a])
 		p1input |= 1<<7;
 	if(keys[SDLK_d])
@@ -178,14 +244,6 @@ void FighterControl(Uint8* keys){
 		p1input |= 1<<5;
 	if(keys[SDLK_s])
 		p1input |= 1<<4;
-	if(keys[SDLK_z])
-		p1input |= 1<<3;
-	if(keys[SDLK_x])
-		p1input |= 1<<2;
-	if(keys[SDLK_c])
-		p1input |= 1<<1;
-	if(keys[SDLK_v])
-		p1input |= 1;
 
 
 	if(keys[SDLK_LEFT])
@@ -196,14 +254,6 @@ void FighterControl(Uint8* keys){
 		p2input |= 1<<5;
 	if(keys[SDLK_DOWN])
 		p2input |= 1<<4;
-	if(keys[SDLK_BACKSLASH])
-		p2input |= 1<<3;
-	if(keys[SDLK_7])
-		p2input |= 1<<2;
-	if(keys[SDLK_8])
-		p2input |= 1<<1;
-	if(keys[SDLK_9])
-		p2input |= 1;
 	
 	FighterInputs(&f1,p1input);
 	FighterInputs(&f2,p2input);
@@ -211,6 +261,15 @@ void FighterControl(Uint8* keys){
 }
 
 void FighterInputs(Fighter* f,Uint8 inputs){
+	int debuginputs = 1,bsize = 5;
+	if(debuginputs){
+		for(int i=0;i<8;i++){
+			if(inputs & 1<<i)
+				for(int k=0;k<bsize;k++)
+					for(int l=0;l<bsize;l++)
+						DrawPixel(screen,255,0,0,5+k+(bsize+1)*i,5+l); 
+		}
+	}
 	/*lrudabxy - order of buttons mapped to bits*/
 	if((inputs & 1<<7)&&(~inputs & 1<<6)){
 		f->vx = -1*f->walkspeed;
@@ -257,10 +316,10 @@ void FighterThink(Fighter *f){ /*for animations and state changing stuff*/
 
 void FighterUpdate(Fighter *f){ /* for movement and physics stuff*/
 	
-	if((f->y+f->vy > FLOOR)&&(f->x > STAGELEFT)&&(f->x < STAGERIGHT)/*if we would be past the floor this frame*/
-	&&((f->y)-FLOOR < 5)) /*if we're coming from above or really close from below*/
+	if((f->y+f->vy > STAGEFLOOR)&&(f->x > STAGELEFT)&&(f->x < STAGERIGHT)/*if we would be past the floor this frame*/
+	&&((f->y)-STAGEFLOOR < 5)) /*if we're coming from above or really close from below*/
 	{
-		f->y = FLOOR;
+		f->y = STAGEFLOOR;
 		f->vy = 0;
 		f->grounded = 1;
 			
@@ -337,5 +396,6 @@ void TakeHit(Fighter* f, int dmg, int kback, int stun){
 }
 
 void Die(Fighter* f){
+	f->health=0;
 	ChangeState(f,DEAD);
 }

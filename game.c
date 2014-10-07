@@ -4,6 +4,9 @@ extern SDL_Surface *screen;
 extern SDL_Surface *buffer; /*pointer to the draw buffer*/
 extern SDL_Rect Camera;
 extern Fighter f1,f2;
+StageList stage;
+Character_T c1,c2;
+    int endgame;
 
 void Init_All();
 void CleanUpAll();
@@ -17,25 +20,23 @@ int main(int argc, char *argv[])
 	int done;
 	int keyn;
 
+	c1 = DOOM;
+	c2 = DOOM;
+	stage = ST_DEBOOG;
 	
-	
-	Uint8 *keys;
+
 	Init_All();
-	LoadLevel();
-	DrawStageBG();
 	GameState = VERSUS;
 	done = 0;
 	do
 	{   
 		ResetBuffer ();
-		FighterControl(keys);
+		FighterControl();
 		Update_All();
 		DrawUpdate();
 		NextFrame();
 		SDL_PumpEvents();
-		keys = SDL_GetKeyState(&keyn);
-    
-		if(keys[SDLK_ESCAPE]){
+		if(endgame){
 			done = 1;
 		}
 	}while(!done);
@@ -46,7 +47,8 @@ int main(int argc, char *argv[])
 void Init_All()
 {
 	Init_Graphics();
-	InitFighters();
+	LoadStage(stage);
+	InitFighters(c1,c2);
 	InitMouse();
 	atexit(CleanUpAll);
 }
@@ -63,6 +65,10 @@ void Update_All()
 	}
 }
 
+void Quit(){
+	endgame = 1;
+}
+
 void CleanUpAll()
 {
   CloseSprites();
@@ -71,7 +77,7 @@ void CleanUpAll()
 
 void DrawUpdate(){
 	if(GameState==VERSUS){
-		DrawStage();
+		DrawStage(stage);
 	//	DrawHurtboxes(screen);
 	//	DrawHitboxes(screen);
 		DrawFighters(screen);

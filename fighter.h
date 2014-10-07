@@ -153,7 +153,9 @@ typedef enum{
 	ATK_AIR_U_K
 }Attack_T;
 
-void InitFighters();
+void Quit();
+
+void InitFighters(Character_T p1, Character_T p2);
 void ClearFighter(Fighter* f);
 /*************************************************************/
 void DrawFighters(SDL_Surface* screen);
@@ -163,7 +165,7 @@ void DrawChar(Fighter* f,Sprite* spr,SDL_Surface* screen);
 void UpdateFrame(Fighter* f);
 void LoadFighter(Fighter*,Character_T);
 /*************************************************************/
-void FighterControl(Uint8* keys);
+void FighterControl();
 void FighterInputs(Fighter* f,Uint8 inputs);
 void FighterThink(Fighter*);
 void FighterUpdate(Fighter*);

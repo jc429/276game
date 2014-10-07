@@ -1,9 +1,17 @@
 #ifndef _STAGE_
 #define _STAGE_
 
-void LoadLevel();
+typedef enum {
+	ST_FIELD=0,
+	ST_PLATFORM=1,
+	ST_DEBOOG=2
+} StageList;
+
+
+void LoadStage(StageList stage);
 void UpdateStage();
-void DrawStage();
-void DrawStageBG();
+void DrawStage(StageList stage);
+void DrawStageBG(char* bgloc);
+
 
 #endif
