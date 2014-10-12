@@ -5,17 +5,24 @@
 
 typedef struct Fighter_T{
 	Fighter_T* opponent;
-// Animation
+/* Animation*/
 	int t_width,t_height,t_per_row;
 	Sprite* f_sprite; //the actual graphics of the fighter (the part that will be visible during normal gameplay)
 	Sprite* f_hitbox;	//the hitboxes of the fighter (used for dealing damage an determining damage/knockback/hitstun)
 	Sprite* f_hurtbox;	//the hurtboxes of the fighter (the part that receives damage)
+	/*these 3 just point to either the left or right version of each sprite to make code simpler*/
+	Sprite* f_spritel; //facing left
+	Sprite* f_spriter; //facing right
+	Sprite* f_hitboxl;
+	Sprite* f_hitboxr;
+	Sprite* f_hurtboxl;
+	Sprite* f_hurtboxr;	
 	int frame;			//what frame of animation we are on (in regards to the entire sprite sheet)
 	int anim_seed;		//first frame of current animation
 	int anim_length;	//length of current animation
 	int facing; // -1 if facing left, 1 if facing right. 0 if anything else
 	int state; // uses a state enum to check attacking, in block, in stun, idle, etc 
-// Position
+/* Position*/
 	int x,y;			//current x and y position
 	int x_prev,y_prev;	//last non-special x and y (for throws and stuff)
 	int x_off,y_off;	//offset from character's 'point' (usually middle of feet) to the top left corner of the frame)
@@ -161,7 +168,7 @@ void ClearFighter(Fighter* f);
 void DrawFighters(SDL_Surface* screen);
 void DrawHitboxes(SDL_Surface* screen);
 void DrawHurtboxes(SDL_Surface* screen);
-void DrawChar(Fighter* f,Sprite* spr,SDL_Surface* screen);
+void DrawChar(Fighter* f,SDL_Surface* screen);
 void UpdateFrame(Fighter* f);
 void LoadFighter(Fighter*,Character_T);
 /*************************************************************/
@@ -170,7 +177,7 @@ void FighterInputs(Fighter* f,Uint8 inputs);
 void FighterThink(Fighter*);
 void FighterUpdate(Fighter*);
 /*************************************************************/
-
+void CheckFacing(Fighter* f);
 void DrawPlayerPoint(Fighter* f);
 void DrawMeters(Fighter* f1,Fighter* f2);
 

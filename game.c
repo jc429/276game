@@ -4,6 +4,7 @@ extern SDL_Surface *screen;
 extern SDL_Surface *buffer; /*pointer to the draw buffer*/
 extern SDL_Rect Camera;
 extern Fighter f1,f2;
+
 StageList stage;
 Character_T c1,c2;
     int endgame;
@@ -22,7 +23,7 @@ int main(int argc, char *argv[])
 
 	c1 = DOOM;
 	c2 = DOOM;
-	stage = ST_DEBOOG;
+	stage = ST_PLATFORM;
 	
 
 	Init_All();
@@ -78,8 +79,6 @@ void CleanUpAll()
 void DrawUpdate(){
 	if(GameState==VERSUS){
 		DrawStage(stage);
-	//	DrawHurtboxes(screen);
-	//	DrawHitboxes(screen);
 		DrawFighters(screen);
 		DrawMeters(&f1,&f2);
 		DrawMouse();
