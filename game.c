@@ -34,8 +34,7 @@ int main(int argc, char *argv[])
 	do
 	{   
 		FighterControl();
-		if(!pause){
-			ResetBuffer();		
+		if(!pause){		
 			Update_All();
 			DrawUpdate();
 			if(nexttimer>0)
@@ -51,6 +50,8 @@ int main(int argc, char *argv[])
 			if(endgame){
 				done = 1;
 			}
+			
+			ResetBuffer();
 		}
 	}while(!done);
 	exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/

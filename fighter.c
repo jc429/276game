@@ -84,8 +84,11 @@ void CheckFacing(Fighter* f){
 }
 
 void UpdateFrame(Fighter* f){	
-	
-	f->frame = (((f->frame + 1)%(f->anim_length))+f->anim_seed);
+	f->frame += 1;
+	if(f->frame >= (f->anim_length+f->anim_seed)){
+		f->frame = ((f->frame-f->anim_seed)%f->anim_length)+f->anim_seed;
+	}
+/*	f->frame = (((f->frame + 1)%(f->anim_length))+f->anim_seed);*/
 	if(f->frame+1 >= (f->anim_length+f->anim_seed))
 		ChangeState(f,IDLE);
 }
