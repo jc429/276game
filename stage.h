@@ -11,7 +11,7 @@ typedef enum {
 void LoadStage(StageList stage);
 void UpdateStage();
 void DrawStage(StageList stage);
-void DrawStageBG(char* bgloc);
+
 
 
 #endif

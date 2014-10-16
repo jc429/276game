@@ -88,6 +88,7 @@ void ResetBuffer();
 void NextFrame();
 void InitMouse();
 void DrawMouse();
+void DrawBG(char* bgloc);
 
 Uint32 getpixel(SDL_Surface *surface, int x, int y);
 

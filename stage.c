@@ -38,23 +38,14 @@ void LoadStage(StageList stage){
 			break;
 	}
 
-	DrawStageBG(bg);
+	DrawBG(bg);
 	
 }
 
 void UpdateStage(){
 }
 
-void DrawStageBG(char* bgloc){
-	SDL_Surface *temp;
-	SDL_Surface *bg;
-	temp = IMG_Load(bgloc);/*notice that the path is part of the filename*/
-	if(temp != NULL)						/*ALWAYS check your pointers before you use them*/
-		bg = SDL_DisplayFormat(temp);
-	SDL_FreeSurface(temp);
-	if(bg != NULL)
-		SDL_BlitSurface(bg,NULL,buffer,NULL);
-}
+
 
 void DrawStage(StageList stage){
 	Sprite *fg=NULL;

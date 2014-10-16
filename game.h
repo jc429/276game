@@ -7,6 +7,7 @@
 #include "graphics.h"
 #include "fighter.h"
 #include "stage.h"
+#include "menus.h"
 #include <glib.h>
 
 typedef enum{
@@ -19,6 +20,10 @@ typedef enum{
 }GameState_T;
 
 GameState_T GameState;
-
+void Init_All();
+void CleanUpAll();
+void DrawUpdate();
+void DrawNextRoundTimer();
+void InitVersus();
 
 #endif
