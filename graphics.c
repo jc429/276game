@@ -797,10 +797,10 @@ void DrawBG(char* bgloc){
 }
 
 void DrawMeters(Fighter* f1,Fighter* f2){
-	int HPloc_y = 100;
+	int HPloc_y = 60;
 	int HPoff_x = 100;//x offset from middle
 	int HPlen = 400;
-	int HPht = 10;
+	int HPht = 15;
 	for(int i=0;i<HPlen;i++){
 		for(int j=0;j<HPht;j++){
 			/*needs to be replaced with a percentage calculation rather than fixed number*/
@@ -814,4 +814,15 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 				DrawPixel(screen,255,80,80,(512+HPoff_x+i-j),HPloc_y+j);
 		}
 	}
+}
+void DrawNextRoundTimer(int time){
+	for(int i=0;i<time;i++){
+		DrawPixel(screen,200,0,0,512+i,70); 
+		DrawPixel(screen,200,0,0,512+i,71); 
+		DrawPixel(screen,200,0,0,512+i,72); 
+		DrawPixel(screen,200,0,0,512-i,70); 
+		DrawPixel(screen,200,0,0,512-i,71); 
+		DrawPixel(screen,200,0,0,512-i,72); 
+	}
+
 }

@@ -13,7 +13,7 @@ void LoadStage(StageList stage){
 	char* bg;
 	switch(stage){
 		case ST_PLATFORM:
-			bg = "images/bgtest2.png";
+			bg = "images/bgimage1.png";
 			STAGEFLOOR = 540;
 			STAGELEFT = 220;
 			STAGERIGHT = 790;

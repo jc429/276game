@@ -1,11 +1,14 @@
 #include "fighter.h"
 
 #define NUMCHARS 3 /*number of characters*/
-#define NUMANIMS 4 /*animations per character*/
+#define NUMANIMS 5 /*animations per character*/
+
+
 
 extern int STAGEFLOOR,STAGELEFT,STAGERIGHT,P1SPAWN,P2SPAWN;
 extern SDL_Surface *screen; /*pointer to the screen*/
 Fighter f1, f2;
+
 
 
 /*** Where should this goooooo? ***/
@@ -14,9 +17,10 @@ int framedata[NUMCHARS][NUMANIMS] = {
 	/*For Now: {idle,attack,hit,dead}*/
 	/*each int denotes the starting point for the animation, in a set order*/
 	/*MAKE SURE EVERY INT IS LARGER THAN THE ONE BEFORE IT*/
-	/*DEBUG*/{0, 1, 2, 3} ,   /*  frames for character 1 */
-	/*DOOM*/{0, 20, 24, 25} ,   /*  ex: column 1 is idle, then idle2, then attacking, then hit, etc */
-	/*WADDLE*/{0, 4, 10, 13}  
+	/*there needs to be a final int that isn't a seed, for the final animation's length*/
+	/*DEBUG*/{0, 1, 2, 3, 4} ,   /*  frames for character 1 */
+	/*DOOM*/{0, 20, 25, 26, 27} ,   /*  ex: column 1 is idle, then idle2, then attacking, then hit, etc */
+	/*WADDLE*/{0, 4, 10, 11, 13}  
 };
 
 /**************************************************************************************************/
@@ -296,7 +300,7 @@ void ChangeState(Fighter* f, State_T st){
 		f->state = st;
 		
 		f->anim_seed = framedata[f->chr][st]; /*seed is where the animation begins on the sheet*/
-		f->anim_length = 1+framedata[f->chr][st+1]-framedata[f->chr][st]; /*anim length is just the distance to the next seed*/
+		f->anim_length = framedata[f->chr][st+1]-framedata[f->chr][st]; /*anim length is just the distance to the next seed*/
 		
 		f->frame = f->anim_seed;
 	}
@@ -305,7 +309,7 @@ void ChangeState(Fighter* f, State_T st){
 
 void Jump(Fighter* f){
 	if(f->grounded&&f->state!=DEAD&&f->hitstun<0){
-		f->state = JUMP_G_N;
+	//	ChangeState(f,JUMP_G_N);
 		f->vy = -20;
 		f->grounded = 0;
 	}

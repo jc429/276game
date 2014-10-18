@@ -23,7 +23,7 @@ GameState_T GameState;
 void Init_All();
 void CleanUpAll();
 void DrawUpdate();
-void DrawNextRoundTimer();
+void DrawNextRoundTimer(int time);
 void InitVersus();
 
 #endif

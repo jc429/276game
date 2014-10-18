@@ -5,6 +5,9 @@ extern SDL_Surface *buffer; /*pointer to the draw buffer*/
 extern SDL_Rect Camera;
 extern Fighter f1,f2;
 
+#define MENUBG "images/menubg.png"
+#define HUDBG "images/hudbg.png"
+
 StageList stage;
 Character_T c1,c2;
 int endgame;
@@ -21,14 +24,14 @@ int main(int argc, char *argv[])
 	int done;
 	int keyn;
 
-	c1 = DOOM;
-	c2 = WADDLE;
+	c2 = DOOM;
+	c1 = WADDLE;
 	stage = ST_PLATFORM;
 	pause = 0;
 
 	Init_All();
 	GameState = VERSUS;
-	DrawBG("images/bgimage1.png");
+	DrawBG(HUDBG);
 	done = 0;
 	nexttimer = -1;
 	do
@@ -40,9 +43,12 @@ int main(int argc, char *argv[])
 			if(nexttimer>0)
 				nexttimer--;
 			if(nexttimer==0){
+				nexttimer--;
 				c1 = DOOM;
 				c2 = DOOM;
 				stage = ST_FIELD;
+				ClearFighter(&f1);
+				ClearFighter(&f2);
 				InitVersus();
 			}
 			NextFrame();
@@ -77,8 +83,10 @@ void Update_All()
 	{
 		FighterInputs(&f1,p1input);
 		FighterInputs(&f2,p2input);
-		FighterThink(&f1);
-		FighterThink(&f2);
+		if((f2.state!=DEAD)&&(f1.state!=DEAD)){
+			FighterThink(&f2);
+			FighterThink(&f1);
+		}
 		FighterUpdate(&f1);
 		FighterUpdate(&f2);
 		UpdateStage();
@@ -106,7 +114,7 @@ void DrawUpdate(){
 		DrawStage(stage);
 		DrawFighters(screen);
 		DrawMeters(&f1,&f2);	
-		DrawNextRoundTimer();
+		DrawNextRoundTimer(nexttimer);
 	}
 	
 	/*int mx,my;
@@ -124,17 +132,11 @@ void GamePause(){
 }
 
 void NextRound(){
-	nexttimer=52;
+	if(nexttimer<0)
+		nexttimer=52;
 }
 
-void DrawNextRoundTimer(){
-	for(int i=0;i<nexttimer;i++){
-		DrawPixel(screen,200,0,0,i,20); 
-		DrawPixel(screen,200,0,0,i,21); 
-		DrawPixel(screen,200,0,0,i,22); 
-	}
 
-}
 void FighterControl(){
 	
 
