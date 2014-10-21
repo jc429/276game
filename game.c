@@ -7,6 +7,8 @@ extern Fighter f1,f2;		/*fighter 1 and fighter 2*/
 
 #define MENUBG "images/menubg.png"
 #define HUDBG "images/hudbg.png"
+#define NEXTTIME 60
+#define NUMROUNDS 3
 
 StageList stage;			/*the selected stage*/
 Character_T c1,c2;			/*the selected characters*/
@@ -133,12 +135,30 @@ void GamePause(){
 	else
 		pause = 0;
 }
+void Die(Fighter* f){
+	if(nexttimer<0){
+		f->health=0;
+		ChangeState(f,DEAD);
+		f->opponent->victories++;		
+		if(f->opponent->victories >= NUMROUNDS){
+			NextGame();
+		}
+		else
+			NextRound();
+	}
+}
 
 void NextRound(){
 	if(nexttimer<0)
-		nexttimer=52;
+		nexttimer=NEXTTIME;
 }
 
+void NextGame(){
+	f1.victories = 0;
+	f2.victories = 0;
+	if(nexttimer<0)
+		nexttimer=NEXTTIME;
+}
 
 void InputControl(){
 	

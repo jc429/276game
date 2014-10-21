@@ -11,8 +11,9 @@ typedef enum{ /*List of Characters in the game*/
 
 typedef struct Fighter_T{
 	Fighter_T* opponent;
-	Character_T chr;/*what character are we?*/
-	int controls;	/*used to lock the controls (0 = locked)*/
+	Character_T chr;	/*what character are we?*/
+	int controls;		/*used to lock the controls (0 = locked)*/
+	Uint8 victories;	/*for tracking rounds won*/
 /* Animation*/
 	int t_width,t_height,t_per_row; /*tile width, height, and num per row*/
 	/*these 3 just point to either the left or right version of each sprite to make code simpler*/
@@ -201,8 +202,6 @@ void CollisionCheck(Fighter* f);
 
 void TakeHit(Fighter* f, int dmg, int kback, int stun);
 void Die(Fighter* f);
-void NextRound();
-void GamePause();
 
 
 

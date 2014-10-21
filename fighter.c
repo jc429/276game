@@ -58,9 +58,9 @@ void DrawFighters(SDL_Surface* surf)
 		DrawPlayerPoint(&f1);
 		DrawPlayerPoint(&f2);	
 	}	
-	if(f1.state!=HIT)
+	if(f1.state!=HIT&&f1.state!=DEAD)
 		UpdateFrame(&f1);
-	if(f2.state!=HIT)
+	if(f2.state!=HIT&&f2.state!=DEAD)
 		UpdateFrame(&f2);
 }
 
@@ -190,7 +190,7 @@ void LoadFighter(Fighter* f, Character_T c){
 		f->anim_seed = framedata[f->chr][IDLE]; /*seed is where the animation begins on the sheet*/
 		f->anim_length = framedata[f->chr][IDLE+1]-framedata[f->chr][IDLE]; /*anim length is just the distance to the next seed*/	
 		f->frame = f->anim_seed;
-		
+		f->state=IDLE;
 		/*ChangeState(f,IDLE);*/
 		f->grounded = 1;
 		f->health = f->healthmax;
@@ -330,10 +330,4 @@ void TakeHit(Fighter* f, int dmg, int kback, int stun){
 //	f->y-=2;
 }
 
-void Die(Fighter* f){
-	
-	f->health=0;
-	ChangeState(f,DEAD);
-	NextRound();
-}
 

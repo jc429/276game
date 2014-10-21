@@ -20,7 +20,7 @@ void LoadStage(StageList stage){
 			P1SPAWN = 270;
 			P2SPAWN = 740;
 			break;
-		case ST_DEBOOG:
+		case ST_DEBUG:
 			bg = "images/bgtest.png";
 			STAGEFLOOR = 550;
 			STAGELEFT = 0;

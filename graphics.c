@@ -813,7 +813,29 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 				DrawPixel(screen,255,80,80,(512+HPoff_x+i-j),HPloc_y+j);
 		}
 	}
+	int rndoff_x = 100;
+	int rndoff_y = 80;
+	int rndsize = 8;
+	int rndspace = 5;
+	int numrounds = 3;
+	for(int r = 0; r < numrounds; r++){
+		for(int i = 0; i < rndsize; i++){
+			for(int j = 0; j < rndsize; j++){
+				if(r < f1->victories)
+					DrawPixel(screen,0,180,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+				else
+					DrawPixel(screen,0,0,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+
+				if(r < f2->victories)
+					DrawPixel(screen,0,180,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+				else
+					DrawPixel(screen,0,0,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+			}
+		}
+	}
 }
+
+
 void DrawNextRoundTimer(int time){
 	for(int i=0;i<time;i++){
 		DrawPixel(screen,200,0,0,512+i,70); 
@@ -823,5 +845,4 @@ void DrawNextRoundTimer(int time){
 		DrawPixel(screen,200,0,0,512-i,71); 
 		DrawPixel(screen,200,0,0,512-i,72); 
 	}
-
 }
