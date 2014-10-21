@@ -1,18 +1,18 @@
 #include "game.h"
 
-extern SDL_Surface *screen;
+extern SDL_Surface *screen; /*pointer to the screen*/
 extern SDL_Surface *buffer; /*pointer to the draw buffer*/
-extern SDL_Rect Camera;
-extern Fighter f1,f2;
+extern SDL_Rect Camera;		
+extern Fighter f1,f2;		/*fighter 1 and fighter 2*/
 
 #define MENUBG "images/menubg.png"
 #define HUDBG "images/hudbg.png"
 
-StageList stage;
-Character_T c1,c2;
-int endgame;
-int nexttimer;
-int pause;
+StageList stage;			/*the selected stage*/
+Character_T c1,c2;			/*the selected characters*/
+int endgame;				/*end the game?*/
+int nexttimer;				/*timer until the next round*/
+int pause;					
 Uint8 p1input = 00000000; /*lrudabxy - order of buttons mapped to bits*/
 Uint8 p2input = 00000000;
 
@@ -20,23 +20,22 @@ Uint8 p2input = 00000000;
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
 int main(int argc, char *argv[])
 {
-	Sprite *tile;
 	int done;
-	int keyn;
 
-	c2 = DOOM;
-	c1 = WADDLE;
+	/*defaults for placeholder reasons*/
+	c1 = DOOM;
+	c2 = WADDLE;
 	stage = ST_PLATFORM;
+	/**/
 	pause = 0;
 
 	Init_All();
 	GameState = VERSUS;
-	DrawBG(HUDBG);
 	done = 0;
 	nexttimer = -1;
 	do
 	{   
-		FighterControl();
+		InputControl();
 		if(!pause){		
 			Update_All();
 			DrawUpdate();
@@ -44,9 +43,12 @@ int main(int argc, char *argv[])
 				nexttimer--;
 			if(nexttimer==0){
 				nexttimer--;
-				c1 = DOOM;
-				c2 = DOOM;
-				stage = ST_FIELD;
+			/*	c1 = DOOM;
+				c2 = DOOM;*/
+				if(stage==ST_PLATFORM)
+					stage = ST_FIELD;
+				else
+					stage = ST_PLATFORM;
 				ClearFighter(&f1);
 				ClearFighter(&f2);
 				InitVersus();
@@ -75,20 +77,21 @@ void Init_All()
 void InitVersus(){	
 	LoadStage(stage);
 	InitFighters(c1,c2);
+	DrawBG(HUDBG);
 }
 
 void Update_All()
 {
 	if(GameState==VERSUS)
 	{
-		FighterInputs(&f1,p1input);
-		FighterInputs(&f2,p2input);
 		if((f2.state!=DEAD)&&(f1.state!=DEAD)){
+			FighterInputs(&f1,p1input);
+			FighterInputs(&f2,p2input);
 			FighterThink(&f2);
 			FighterThink(&f1);
+			FighterUpdate(&f1);
+			FighterUpdate(&f2);
 		}
-		FighterUpdate(&f1);
-		FighterUpdate(&f2);
 		UpdateStage();
 	}
 		
@@ -128,7 +131,7 @@ void GamePause(){
 	if(pause==0)
 		pause = 1;
 	else
-		pause=0;
+		pause = 0;
 }
 
 void NextRound(){
@@ -137,67 +140,67 @@ void NextRound(){
 }
 
 
-void FighterControl(){
+void InputControl(){
 	
 
 	SDL_Event events;
-//	Uint8* keys = SDL_GetKeyState(NULL);
+/*	Uint8* keys = SDL_GetKeyState(NULL);*/
 	while(SDL_PollEvent(&events)){
 		switch(events.type){
 			case SDL_KEYDOWN:
 				switch(events.key.keysym.sym){
-				case SDLK_SPACE:
-					GamePause();
-					break;
-				case SDLK_a:
-					p1input |= 1<<7;
-					break;
-				case SDLK_d:
-					p1input |= 1<<6;
-					break;
-				case SDLK_w:
-					p1input |= 1<<5;
-					break;
-				case SDLK_s:
-					p1input |= 1<<4;
-					break;
-				case SDLK_z:
-					p1input |= 1<<3;
-					break;
-				case SDLK_x:
-					p1input |= 1<<2;
-					break;
-				case SDLK_c:
-					p1input |= 1<<1;
-					break;
-				case SDLK_v:
-					p1input |= 1;
-					break;
+					case SDLK_SPACE:
+						GamePause();
+						break;
+					case SDLK_a:
+						p1input |= 1<<7;
+						break;
+					case SDLK_d:
+						p1input |= 1<<6;
+						break;
+					case SDLK_w:
+						p1input |= 1<<5;
+						break;
+					case SDLK_s:
+						p1input |= 1<<4;
+						break;
+					case SDLK_z:
+						p1input |= 1<<3;
+						break;
+					case SDLK_x:
+						p1input |= 1<<2;
+						break;
+					case SDLK_c:
+						p1input |= 1<<1;
+						break;
+					case SDLK_v:
+						p1input |= 1;
+						break;
 
-				case SDLK_LEFT:
-					p2input |= 1<<7;
-					break;
-				case SDLK_RIGHT:
-					p2input |= 1<<6;
-					break;
-				case SDLK_UP:
-					p2input |= 1<<5;
-					break;
-				case SDLK_DOWN:
-					p2input |= 1<<4;
-					break;
-				case SDLK_BACKSLASH:
-					p2input |= 1<<3;
-					break;
-				case SDLK_7:
-					p2input |= 1<<2;
-					break;
-				case SDLK_8:
-					p2input |= 1<<1;
-					break;
-				case SDLK_9:
-					p2input |= 1;
-					break;
+					case SDLK_LEFT:
+						p2input |= 1<<7;
+						break;
+					case SDLK_RIGHT:
+						p2input |= 1<<6;
+						break;
+					case SDLK_UP:
+						p2input |= 1<<5;
+						break;
+					case SDLK_DOWN:
+						p2input |= 1<<4;
+						break;
+					case SDLK_BACKSLASH:
+						p2input |= 1<<3;
+						break;
+					case SDLK_7:
+						p2input |= 1<<2;
+						break;
+					case SDLK_8:
+						p2input |= 1<<1;
+						break;
+					case SDLK_9:
+						p2input |= 1;
+						break;
 
 
 				
@@ -206,57 +209,57 @@ void FighterControl(){
 				continue;
 			case SDL_KEYUP:
 				switch(events.key.keysym.sym){
-				case SDLK_ESCAPE:
-					Quit();
-					break;
-				case SDLK_a:
-					p1input &= 0<<7;
-					break;
-				case SDLK_d:
-					p1input &= 0<<6;
-					break;
-				case SDLK_w:
-					p1input &= 0<<5;
-					break;
-				case SDLK_s:
-					p1input &= 0<<4;
-					break;
-				case SDLK_z:
-					p1input &= 0<<3;
-					break;
-				case SDLK_x:
-					p1input &= 0<<2;
-					break;
-				case SDLK_c:
-					p1input &= 0<<1;
-					break;
-				case SDLK_v:
-					p1input &= 0;
-					break;
-				case SDLK_LEFT:
-					p2input &= 0<<7;
-					break;
-				case SDLK_RIGHT:
-					p2input &= 0<<6;
-					break;
-				case SDLK_UP:
-					p2input &= 0<<5;
-					break;
-				case SDLK_DOWN:
-					p2input &= 0<<4;
-					break;
-				case SDLK_BACKSLASH:
-					p2input &= 0<<3;
-					break;
-				case SDLK_7:
-					p2input &= 0<<2;
-					break;
-				case SDLK_8:
-					p2input &= 0<<1;
-					break;
-				case SDLK_9:
-					p2input &= 0;
-					break;
+					case SDLK_ESCAPE:
+						Quit();
+						break;
+					case SDLK_a:
+						p1input &= 0<<7;
+						break;
+					case SDLK_d:
+						p1input &= 0<<6;
+						break;
+					case SDLK_w:
+						p1input &= 0<<5;
+						break;
+					case SDLK_s:
+						p1input &= 0<<4;
+						break;
+					case SDLK_z:
+						p1input &= 0<<3;
+						break;
+					case SDLK_x:
+						p1input &= 0<<2;
+						break;
+					case SDLK_c:
+						p1input &= 0<<1;
+						break;
+					case SDLK_v:
+						p1input &= 0;
+						break;
+					case SDLK_LEFT:
+						p2input &= 0<<7;
+						break;
+					case SDLK_RIGHT:
+						p2input &= 0<<6;
+						break;
+					case SDLK_UP:
+						p2input &= 0<<5;
+						break;
+					case SDLK_DOWN:
+						p2input &= 0<<4;
+						break;
+					case SDLK_BACKSLASH:
+						p2input &= 0<<3;
+						break;
+					case SDLK_7:
+						p2input &= 0<<2;
+						break;
+					case SDLK_8:
+						p2input &= 0<<1;
+						break;
+					case SDLK_9:
+						p2input &= 0;
+						break;
 				}
 			default:
 				continue;
@@ -292,21 +295,21 @@ void FighterControl(){
 			if(p1input & 1<<i)
 				for(int k=0;k<bsize;k++)
 					for(int l=0;l<bsize;l++)
-						DrawPixel(screen,255,0,0,5+k+(bsize+1)*i,5+l); 
+						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),5+l); 
 			else 
 				for(int k=0;k<bsize;k++)
 					for(int l=0;l<bsize;l++)
-						DrawPixel(screen,0,0,255,5+k+(bsize+1)*i,5+l); 
+						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),5+l); 
 		}
 		for(int i=0;i<8;i++){
 			if(p2input & 1<<i)
 				for(int k=0;k<bsize;k++)
 					for(int l=0;l<bsize;l++)
-						DrawPixel(screen,255,0,0,5+k+(bsize+1)*i,12+l); 
+						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),12+l); 
 			else 
 				for(int k=0;k<bsize;k++)
 					for(int l=0;l<bsize;l++)
-						DrawPixel(screen,0,0,255,5+k+(bsize+1)*i,12+l); 
+						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),12+l); 
 		}
 	}
 

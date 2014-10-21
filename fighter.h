@@ -180,7 +180,7 @@ void DrawChar(Fighter* f,SDL_Surface* screen);
 void UpdateFrame(Fighter* f);
 void LoadFighter(Fighter*,Character_T);
 /*************************************************************/
-void FighterControl();
+void InputControl();
 void FighterInputs(Fighter* f,Uint8 inputs);
 void FighterThink(Fighter*);
 void FighterUpdate(Fighter*);

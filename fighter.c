@@ -67,9 +67,13 @@ void DrawFighters(SDL_Surface* surf)
 void DrawChar(Fighter* f, SDL_Surface* screen){
 	if(f->state!=ATTACKING)
 		CheckFacing(f);
-	DrawSprite(f->f_sprite,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
+	
 	if(0)
 		DrawSprite(f->f_hurtbox,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
+	
+	if(1)
+		DrawSprite(f->f_sprite,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
+
 	if(0)
 		DrawSprite(f->f_hitbox,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
 }
@@ -183,12 +187,11 @@ void LoadFighter(Fighter* f, Character_T c){
 		f->walkspeed=5;
 		/**************************/
 	
-		f->anim_length = 1;
-		f->anim_seed = 0;
-		f->frame = 0;
+		f->anim_seed = framedata[f->chr][IDLE]; /*seed is where the animation begins on the sheet*/
+		f->anim_length = framedata[f->chr][IDLE+1]-framedata[f->chr][IDLE]; /*anim length is just the distance to the next seed*/	
+		f->frame = f->anim_seed;
 		
-	//	ChangeState(f,ATTACKING);
-		ChangeState(f,IDLE);
+		/*ChangeState(f,IDLE);*/
 		f->grounded = 1;
 		f->health = f->healthmax;
 		

@@ -20,9 +20,8 @@ SDL_Surface *buffer; /*pointer to the background image buffer*/
 SDL_Surface *videobuffer; /*pointer to the actual video surface*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
 Sprite SpriteList[MaxSprites];
-Sprite *Msprite;	// mouse sprite
-//Sprite *Point;		// point sprite used to debug player position
-//Fighter f1, f2;///////////////////////////////////////////////////////////////////////////////////////////////////////
+Sprite *Msprite;	/* mouse sprite*/
+Sprite *Point;		/* point sprite used to debug player position*/
 int NumSprites;
 Uint32 NOW;					/*the current time since program started*/
 
@@ -124,7 +123,7 @@ void NextFrame()
   Then = NOW;									/*these next few lines  are used to show how long each frame takes to update.  */
   NOW = SDL_GetTicks();
 
-  //fprintf(stdout,"Ticks passed this frame: %i\n", NOW - Then);
+  /*fprintf(stdout,"Ticks passed this frame: %i\n", NOW - Then);*/
   FrameDelay(50); /* 33 will make your frame rate about 30 frames per second.  If you want 60 fps then set it to about 17*/
 }
 
@@ -227,7 +226,7 @@ Sprite *LoadSwappedSprite(char *filename,int sizex, int sizey, int c1, int c2, i
   SDL_FreeSurface(temp);
   /*sets a transparent color for blitting.*/
   SDL_SetColorKey(SpriteList[i].image, SDL_SRCCOLORKEY , SDL_MapRGB(SpriteList[i].image->format, 255,255,255));
-  //fprintf(stderr,"asked for colors: %d,%d,%d \n",c1,c2,c3);
+  /*fprintf(stderr,"asked for colors: %d,%d,%d \n",c1,c2,c3);*/
   SwapSprite(SpriteList[i].image,c1,c2,c3);
    /*then copy the given information to the sprite*/
   strcpy_s(SpriteList[i].filename,filename);
@@ -798,7 +797,7 @@ void DrawBG(char* bgloc){
 
 void DrawMeters(Fighter* f1,Fighter* f2){
 	int HPloc_y = 60;
-	int HPoff_x = 100;//x offset from middle
+	int HPoff_x = 100;/*x offset from middle of screeen*/
 	int HPlen = 400;
 	int HPht = 15;
 	for(int i=0;i<HPlen;i++){
