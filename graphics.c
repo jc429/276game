@@ -106,7 +106,11 @@ void Init_Graphics()
     Camera.w = screen->w;/*we want to make sure that our camera is the same size of the video screen*/
     Camera.h = screen->h;
     SDL_ShowCursor(SDL_DISABLE);/*don't show the mouse */
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
+    SDL_EnableKeyRepeat(0,SDL_DEFAULT_REPEAT_INTERVAL); /*disable key repeating*/
+
+	const char *GameName = "DR. WADDLE'S TOTALLY NOT SMASH BROS FIGHTING SIMULATOR 2015";
+    const char *IconName = "ThereWillBeAnIconOneDay";
+    SDL_WM_SetCaption(GameName,IconName);
 }
 
 
@@ -822,12 +826,12 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 		for(int i = 0; i < rndsize; i++){
 			for(int j = 0; j < rndsize; j++){
 				if(r < f1->victories)
-					DrawPixel(screen,0,180,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+					DrawPixel(screen,90,180,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
 				else
 					DrawPixel(screen,0,0,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
 
 				if(r < f2->victories)
-					DrawPixel(screen,0,180,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+					DrawPixel(screen,90,180,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
 				else
 					DrawPixel(screen,0,0,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
 			}
@@ -838,11 +842,21 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 
 void DrawNextRoundTimer(int time){
 	for(int i=0;i<time;i++){
+		DrawPixel(screen,200,0,0,512+i,69); 
 		DrawPixel(screen,200,0,0,512+i,70); 
 		DrawPixel(screen,200,0,0,512+i,71); 
 		DrawPixel(screen,200,0,0,512+i,72); 
+		DrawPixel(screen,200,0,0,512+i,73); 
+
+		DrawPixel(screen,200,0,0,512-i,69); 
 		DrawPixel(screen,200,0,0,512-i,70); 
 		DrawPixel(screen,200,0,0,512-i,71); 
 		DrawPixel(screen,200,0,0,512-i,72); 
+		DrawPixel(screen,200,0,0,512-i,73); 
 	}
+}
+
+void DrawPause(Sprite* pausescr){
+	DrawPixel(screen,255,255,255,512,700);
+	DrawSprite(pausescr,screen,0,0, 1);
 }

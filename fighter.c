@@ -30,6 +30,11 @@ void InitFighters(Character_T p1, Character_T p2)
 	LoadFighter(&f2,p2);
 	f1.opponent = &f2;
 	f2.opponent = &f1;	
+	
+	f1.x = P1SPAWN;
+	f2.x = P2SPAWN;
+	f1.facing = 1;
+	f2.facing = -1;
 }
 void ClearFighter(Fighter *f){
 	if(f->f_spritel!= NULL)FreeSprite(f->f_spritel);
@@ -178,7 +183,10 @@ void LoadFighter(Fighter* f, Character_T c){
 				fscanf(fileptr,"%i",&f->healthmax);
 				fscanf(fileptr,"%s",buf);
 			}
-
+			if(strcmp(buf,"maxjumps:")==0){
+				fscanf(fileptr,"%i",&f->maxjumps);
+				fscanf(fileptr,"%s",buf);
+			}
 		}
 		fclose(fileptr);
 
@@ -191,10 +199,10 @@ void LoadFighter(Fighter* f, Character_T c){
 		f->anim_length = framedata[f->chr][IDLE+1]-framedata[f->chr][IDLE]; /*anim length is just the distance to the next seed*/	
 		f->frame = f->anim_seed;
 		f->state=IDLE;
-		/*ChangeState(f,IDLE);*/
+		f->hasjump = f->maxjumps;
 		f->grounded = 1;
 		f->health = f->healthmax;
-		
+		f->hitstun = 0;
 
 	}
 
@@ -205,10 +213,6 @@ void LoadFighter(Fighter* f, Character_T c){
 	f->controls = 1;
 
 	f->y = STAGEFLOOR;
-	f1.x = P1SPAWN;
-	f2.x = P2SPAWN;
-	f1.facing = 1;
-	f2.facing = -1;
 
 }
 /**************************************************************************************************/
@@ -254,6 +258,9 @@ void FighterThink(Fighter *f){ /*for animations and state changing stuff*/
 		else if(f->x > f->opponent->x)
 			f->facing = -1;
 			*/
+		if(f->jumptimer>=0)
+			f->jumptimer--;
+
 		if(f->hitstun>=0)
 			f->hitstun--;
 		else if(f->state==HIT)
@@ -269,7 +276,7 @@ void FighterUpdate(Fighter *f){ /* for movement and physics stuff*/
 		f->y = STAGEFLOOR;
 		f->vy = 0;
 		f->grounded = 1;
-			
+		f->hasjump = f->maxjumps;
 	}else{
 		f->y += f->vy;
 		f->vy+=2; 
@@ -311,10 +318,12 @@ void ChangeState(Fighter* f, State_T st){
 }
 
 void Jump(Fighter* f){
-	if(f->grounded&&f->state!=DEAD&&f->hitstun<0){
-	//	ChangeState(f,JUMP_G_N);
+	if(f->state!=DEAD&&f->hitstun<0&&f->hasjump>0&&f->jumptimer<0){
+	/*	ChangeState(f,JUMP_G_N);*/
 		f->vy = -20;
 		f->grounded = 0;
+		f->hasjump--;
+		f->jumptimer = 8;
 	}
 }
 

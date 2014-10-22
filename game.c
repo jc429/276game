@@ -18,6 +18,11 @@ int pause;
 Uint8 p1input = 00000000; /*lrudabxy - order of buttons mapped to bits*/
 Uint8 p2input = 00000000;
 
+Sprite* pausescr;
+Sprite* p1vic;
+Sprite* p2vic;
+Sprite* drawvic;
+
 /*this program must be run from the directory directly below images and src, not from within src*/
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
 int main(int argc, char *argv[])
@@ -41,9 +46,15 @@ int main(int argc, char *argv[])
 		if(!pause){		
 			Update_All();
 			DrawUpdate();
-			if(nexttimer>0)
+			if(nexttimer>0){
+				if(f2.state==DEAD && f1.state==DEAD)
+					DrawSprite(drawvic,screen,0,0,0);
+				else if(f2.state==DEAD)
+					DrawSprite(p1vic,screen,0,0,0);
+				else
+					DrawSprite(p2vic,screen,0,0,0);
 				nexttimer--;
-			if(nexttimer==0){
+			}if(nexttimer==0){
 				nexttimer--;
 			/*	c1 = DOOM;
 				c2 = DOOM;*/
@@ -56,13 +67,16 @@ int main(int argc, char *argv[])
 				InitVersus();
 			}
 			NextFrame();
-			SDL_PumpEvents();
+			
 			if(endgame){
 				done = 1;
 			}
 			
 			ResetBuffer();
+
 		}
+		else
+			DrawPause(pausescr);
 	}while(!done);
 	exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/
 	return 0;
@@ -71,6 +85,7 @@ int main(int argc, char *argv[])
 void Init_All()
 {
 	Init_Graphics();
+	
 	InitVersus();
 	InitMouse();
 	atexit(CleanUpAll);
@@ -80,6 +95,11 @@ void InitVersus(){
 	LoadStage(stage);
 	InitFighters(c1,c2);
 	DrawBG(HUDBG);
+	char* pauseloc = "images/pause.png";
+	pausescr = LoadSprite(pauseloc,1024,768,1);
+	p1vic = LoadSprite("images/p1win.png",1024,768,1);
+	p2vic = LoadSprite("images/p2win.png",1024,768,1);
+	drawvic = LoadSprite("images/draw.png",1024,768,1);
 }
 
 void Update_All()
@@ -100,6 +120,8 @@ void Update_All()
 }
 
 void Quit(){
+	if(pause)
+		GamePause();
 	endgame = 1;
 }
 
@@ -130,17 +152,20 @@ void DrawUpdate(){
 }
 
 void GamePause(){
-	if(pause==0)
+	if(pause==0){
+		DrawSprite(pausescr,screen,0,0,1);
 		pause = 1;
-	else
+	}else
 		pause = 0;
 }
 void Die(Fighter* f){
+		
 	if(nexttimer<0){
 		f->health=0;
 		ChangeState(f,DEAD);
 		f->opponent->victories++;		
 		if(f->opponent->victories >= NUMROUNDS){
+			
 			NextGame();
 		}
 		else
@@ -162,9 +187,78 @@ void NextGame(){
 
 void InputControl(){
 	
+	SDL_PumpEvents();
+	p1input = 0;
+	p2input = 0;
+	Uint8* keys = SDL_GetKeyState(NULL);
+	if(keys[SDLK_SPACE])
+		GamePause();
+	if(keys[SDLK_ESCAPE])
+		Quit();
 
-	SDL_Event events;
-/*	Uint8* keys = SDL_GetKeyState(NULL);*/
+	if(keys[SDLK_a])
+		p1input |= 1<<7;
+	if(keys[SDLK_d])
+		p1input |= 1<<6;
+	if(keys[SDLK_w])
+		p1input |= 1<<5;
+	if(keys[SDLK_s])
+		p1input |= 1<<4;
+	if(keys[SDLK_z])
+		p1input |= 1<<3;
+	if(keys[SDLK_x])
+		p1input |= 1<<2;
+	if(keys[SDLK_c])
+		p1input |= 1<<1;
+	if(keys[SDLK_v])
+		p1input |= 1;
+
+
+	if(keys[SDLK_LEFT])
+		p2input |= 1<<7;
+	if(keys[SDLK_RIGHT])
+		p2input |= 1<<6;
+	if(keys[SDLK_UP])
+		p2input |= 1<<5;
+	if(keys[SDLK_DOWN])
+		p2input |= 1<<4;
+	if(keys[SDLK_p])
+		p2input |= 1<<3;
+	if(keys[SDLK_o])
+		p2input |= 1<<2;
+	if(keys[SDLK_i])
+		p2input |= 1<<1;
+	if(keys[SDLK_u])
+		p2input |= 1;
+
+
+	int debuginputs = 1,bsize = 5;
+	if(debuginputs){
+		for(int i=0;i<8;i++){
+			if(p1input & 1<<i)
+				for(int k=0;k<bsize;k++)
+					for(int l=0;l<bsize;l++)
+						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),5+l); 
+			else 
+				for(int k=0;k<bsize;k++)
+					for(int l=0;l<bsize;l++)
+						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),5+l); 
+		}
+		for(int i=0;i<8;i++){
+			if(p2input & 1<<i)
+				for(int k=0;k<bsize;k++)
+					for(int l=0;l<bsize;l++)
+						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),12+l); 
+			else 
+				for(int k=0;k<bsize;k++)
+					for(int l=0;l<bsize;l++)
+						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),12+l); 
+		}
+	}
+
+}
+
+	/*SDL_Event events;
 	while(SDL_PollEvent(&events)){
 		switch(events.type){
 			case SDL_KEYDOWN:
@@ -209,16 +303,16 @@ void InputControl(){
 					case SDLK_DOWN:
 						p2input |= 1<<4;
 						break;
-					case SDLK_BACKSLASH:
+					case SDLK_p:
 						p2input |= 1<<3;
 						break;
-					case SDLK_7:
+					case SDLK_o:
 						p2input |= 1<<2;
 						break;
-					case SDLK_8:
+					case SDLK_i:
 						p2input |= 1<<1;
 						break;
-					case SDLK_9:
+					case SDLK_u:
 						p2input |= 1;
 						break;
 
@@ -268,16 +362,16 @@ void InputControl(){
 					case SDLK_DOWN:
 						p2input &= 0<<4;
 						break;
-					case SDLK_BACKSLASH:
+					case SDLK_p:
 						p2input &= 0<<3;
 						break;
-					case SDLK_7:
+					case SDLK_o:
 						p2input &= 0<<2;
 						break;
-					case SDLK_8:
+					case SDLK_i:
 						p2input &= 0<<1;
 						break;
-					case SDLK_9:
+					case SDLK_u:
 						p2input &= 0;
 						break;
 				}
@@ -287,50 +381,4 @@ void InputControl(){
 
 
 		}
-	}
-	/*
-	if(keys[SDLK_a])
-		p1input |= 1<<7;
-	if(keys[SDLK_d])
-		p1input |= 1<<6;
-	if(keys[SDLK_w])
-		p1input |= 1<<5;
-	if(keys[SDLK_s])
-		p1input |= 1<<4;
-
-
-	if(keys[SDLK_LEFT])
-		p2input |= 1<<7;
-	if(keys[SDLK_RIGHT])
-		p2input |= 1<<6;
-	if(keys[SDLK_UP])
-		p2input |= 1<<5;
-	if(keys[SDLK_DOWN])
-		p2input |= 1<<4;
-	*/
-
-	int debuginputs = 1,bsize = 5;
-	if(debuginputs){
-		for(int i=0;i<8;i++){
-			if(p1input & 1<<i)
-				for(int k=0;k<bsize;k++)
-					for(int l=0;l<bsize;l++)
-						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),5+l); 
-			else 
-				for(int k=0;k<bsize;k++)
-					for(int l=0;l<bsize;l++)
-						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),5+l); 
-		}
-		for(int i=0;i<8;i++){
-			if(p2input & 1<<i)
-				for(int k=0;k<bsize;k++)
-					for(int l=0;l<bsize;l++)
-						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),12+l); 
-			else 
-				for(int k=0;k<bsize;k++)
-					for(int l=0;l<bsize;l++)
-						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),12+l); 
-		}
-	}
-
-}
+	}*/
