@@ -1,6 +1,9 @@
 DR. WADDLE'S TOTALLY NOT SMASH BROS FIGHTING SIMULATOR 2015
 *All graphics not mine. Except that sexy sexy HUD*
 
+WARNING: I funked up real good and compiled my project as C++ code. It compiles fine if you make it a C++ project, but as you could imagine making it a C project produces over 100 errors. I'll fix this ASAP.
+
+
 Controls:
 
 Space - Pause
