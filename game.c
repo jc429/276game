@@ -14,14 +14,19 @@ StageList stage;			/*the selected stage*/
 Character_T c1,c2;			/*the selected characters*/
 int endgame;				/*end the game?*/
 int nexttimer;				/*timer until the next round*/
-int pause;					
-Uint8 p1input = 00000000; /*lrudabxy - order of buttons mapped to bits*/
+Uint8 pause;					/*pause flag*/
+Uint8 p1input = 00000000;	/*lrudabxy - order of buttons mapped to bits*/
 Uint8 p2input = 00000000;
+char* pauseloc;				/*location of the pause screen*/
+Sprite* pausescr;			/*the pause screen*/
+Sprite* p1vic;				/*p1 victory screen*/
+Sprite* p2vic;				/*p2 victory screen*/
+Sprite* drawvic;			/*draw screen*/
 
-Sprite* pausescr;
-Sprite* p1vic;
-Sprite* p2vic;
-Sprite* drawvic;
+Uint8* keys;				/*keys pressed*/
+int i,j,k,l;				/*iterators*/
+int debuginputs;			/*Show key presses?*/
+int bsize;					/*size of the icons for each key*/
 
 /*this program must be run from the directory directly below images and src, not from within src*/
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
@@ -95,7 +100,7 @@ void InitVersus(){
 	LoadStage(stage);
 	InitFighters(c1,c2);
 	DrawBG(HUDBG);
-	char* pauseloc = "images/pause.png";
+	pauseloc = "images/pause.png";
 	pausescr = LoadSprite(pauseloc,1024,768,1);
 	p1vic = LoadSprite("images/p1win.png",1024,768,1);
 	p2vic = LoadSprite("images/p2win.png",1024,768,1);
@@ -184,13 +189,13 @@ void NextGame(){
 	if(nexttimer<0)
 		nexttimer=NEXTTIME;
 }
-
+	
 void InputControl(){
 	
 	SDL_PumpEvents();
 	p1input = 0;
 	p2input = 0;
-	Uint8* keys = SDL_GetKeyState(NULL);
+	keys = SDL_GetKeyState(NULL);
 	if(keys[SDLK_SPACE])
 		GamePause();
 	if(keys[SDLK_ESCAPE])
@@ -232,26 +237,26 @@ void InputControl(){
 		p2input |= 1;
 
 
-	int debuginputs = 1,bsize = 5;
+	debuginputs = 1,bsize = 5;
 	if(debuginputs){
-		for(int i=0;i<8;i++){
+		for(i=0;i<8;i++){
 			if(p1input & 1<<i)
-				for(int k=0;k<bsize;k++)
-					for(int l=0;l<bsize;l++)
+				for(k=0;k<bsize;k++)
+					for(l=0;l<bsize;l++)
 						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),5+l); 
 			else 
-				for(int k=0;k<bsize;k++)
-					for(int l=0;l<bsize;l++)
+				for(k=0;k<bsize;k++)
+					for(l=0;l<bsize;l++)
 						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),5+l); 
 		}
-		for(int i=0;i<8;i++){
+		for(i=0;i<8;i++){
 			if(p2input & 1<<i)
-				for(int k=0;k<bsize;k++)
-					for(int l=0;l<bsize;l++)
+				for(k=0;k<bsize;k++)
+					for(l=0;l<bsize;l++)
 						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),12+l); 
 			else 
-				for(int k=0;k<bsize;k++)
-					for(int l=0;l<bsize;l++)
+				for(k=0;k<bsize;k++)
+					for(l=0;l<bsize;l++)
 						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),12+l); 
 		}
 	}

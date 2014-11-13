@@ -1,13 +1,15 @@
 #include "fighter.h"
+#include "stage.h"
 
-#define NUMCHARS 3 /*number of characters*/
+#define NUMCHARS 3 /*number of characters in the game*/
 #define NUMANIMS 5 /*animations per character*/
 
 
 
-extern int STAGEFLOOR,STAGELEFT,STAGERIGHT,P1SPAWN,P2SPAWN;
+//extern int STAGEFLOOR,STAGELEFT,STAGERIGHT,P1SPAWN,P2SPAWN;
 extern SDL_Surface *screen; /*pointer to the screen*/
 Fighter f1, f2;
+extern Stage st;
 
 
 
@@ -24,6 +26,8 @@ int framedata[NUMCHARS][NUMANIMS] = {
 };
 
 /**************************************************************************************************/
+
+/** Initializes both fighters for battle*/
 void InitFighters(Character_T p1, Character_T p2)
 {
 	LoadFighter(&f1,p1);
@@ -31,11 +35,13 @@ void InitFighters(Character_T p1, Character_T p2)
 	f1.opponent = &f2;
 	f2.opponent = &f1;	
 	
-	f1.x = P1SPAWN;
-	f2.x = P2SPAWN;
+	f1.x = st.P1spawn;
+	f2.x = st.P2spawn;
 	f1.facing = 1;
 	f2.facing = -1;
 }
+
+/** Clears a fighter for reuse*/
 void ClearFighter(Fighter *f){
 	if(f->f_spritel!= NULL)FreeSprite(f->f_spritel);
 	if(f->f_spriter!= NULL)FreeSprite(f->f_spriter);
@@ -45,10 +51,12 @@ void ClearFighter(Fighter *f){
 	if(f->f_hurtboxr!= NULL)FreeSprite(f->f_hurtboxr);
 }
 /**************************************************************************************************/
+
+/** Draws the fighters to the screen*/
 void DrawFighters(SDL_Surface* surf)
 {
-	int showsprites = 1;
-	int showpoints = 1;
+	int showsprites = 1;	/**< Draw the sprites? */
+	int showpoints = 1;		/**< Show their points?*/
 	/******************************/
 	if(showsprites){
 		if((f1.f_spriter != NULL)&&((f1.f_spriter != NULL))) {
@@ -63,6 +71,7 @@ void DrawFighters(SDL_Surface* surf)
 		DrawPlayerPoint(&f1);
 		DrawPlayerPoint(&f2);	
 	}	
+
 	if(f1.state!=HIT&&f1.state!=DEAD)
 		UpdateFrame(&f1);
 	if(f2.state!=HIT&&f2.state!=DEAD)
@@ -70,19 +79,24 @@ void DrawFighters(SDL_Surface* surf)
 }
 
 void DrawChar(Fighter* f, SDL_Surface* screen){
+	int drawsprite = 1;
+	int drawhitbox = 0;
+	int drawhurtbox = 0;
+
 	if(f->state!=ATTACKING)
 		CheckFacing(f);
 	
-	if(0)
+	if(drawhurtbox)
 		DrawSprite(f->f_hurtbox,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
 	
-	if(1)
+	if(drawsprite)
 		DrawSprite(f->f_sprite,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
 
-	if(0)
+	if(drawhitbox)
 		DrawSprite(f->f_hitbox,screen,f->x-f->x_off,f->y-f->y_off,f->frame);
 }
 
+/** check which way the fighter is facing and update sprites accordingly*/
 void CheckFacing(Fighter* f){
 	if (f->facing == -1){
 		f->f_sprite = f->f_spritel;
@@ -96,16 +110,17 @@ void CheckFacing(Fighter* f){
 	}
 }
 
+/** update the fighter's animation frame*/
 void UpdateFrame(Fighter* f){	
 	f->frame += 1;
 	if(f->frame >= (f->anim_length+f->anim_seed)){
 		f->frame = ((f->frame-f->anim_seed)%f->anim_length)+f->anim_seed;
 	}
-/*	f->frame = (((f->frame + 1)%(f->anim_length))+f->anim_seed);*/
 	if(f->frame+1 >= (f->anim_length+f->anim_seed))
 		ChangeState(f,IDLE);
 }
 /**************************************************************************************************/
+/** load the fighter's data from a config file*/
 void LoadFighter(Fighter* f, Character_T c){
 	char* filepath;
 	f->chr = c;
@@ -212,12 +227,12 @@ void LoadFighter(Fighter* f, Character_T c){
 
 	f->controls = 1;
 
-	f->y = STAGEFLOOR;
+	f->y = st.platform_list->p_ypos;
 
 }
 /**************************************************************************************************/
 
-
+/** do things based on the player inputs*/
 void FighterInputs(Fighter* f,Uint8 inputs){
 	if(f->controls){ /*if our controls aren't locked*/
 		/*lrudabxy - order of buttons mapped to bits*/
@@ -243,7 +258,10 @@ void FighterInputs(Fighter* f,Uint8 inputs){
 		}
 	}
 }
-void FighterThink(Fighter *f){ /*for animations and state changing stuff*/
+
+/** for animations and state changing stuff*/
+void FighterThink(Fighter *f){ 
+	int alwaysFaceOpponent = 0; /**< maybe we want to always be facing the opponent like street fighter*/
 	if(f->health<=0&&f->state!=DEAD)
 		Die(f);
 	else{
@@ -252,12 +270,13 @@ void FighterThink(Fighter *f){ /*for animations and state changing stuff*/
 			ChangeState(f,HIT);
 		if(f->state==ATTACKING)
 			CollisionCheck(f);
-		/*
-		if(f->x < f->opponent->x)
-			f->facing = 1;
-		else if(f->x > f->opponent->x)
-			f->facing = -1;
-			*/
+		if(alwaysFaceOpponent){
+			if(f->x < f->opponent->x)
+				f->facing = 1;
+			else if(f->x > f->opponent->x)
+				f->facing = -1;
+			CheckFacing(f);
+		}
 		if(f->jumptimer>=0)
 			f->jumptimer--;
 
@@ -268,12 +287,14 @@ void FighterThink(Fighter *f){ /*for animations and state changing stuff*/
 	}
 }
 
-void FighterUpdate(Fighter *f){ /* for movement and physics stuff*/
+/** for movement and physics stuff*/
+void FighterUpdate(Fighter *f){ 
 	
-	if((f->y+f->vy > STAGEFLOOR)&&(f->x > STAGELEFT)&&(f->x < STAGERIGHT)/*if we would be past the floor this frame*/
-	&&((f->y)-STAGEFLOOR < 5)) /*if we're coming from above or really close from below*/
+	if((f->y+f->vy > st.platform_list->p_ypos)&&(f->x > st.platform_list->p_left)
+		&&(f->x < st.platform_list->p_right)/*if we would be past the floor this frame*/
+		&&((f->y)-st.platform_list->p_ypos < 5)) /*if we're coming from above or really close from below*/
 	{
-		f->y = STAGEFLOOR;
+		f->y = st.platform_list->p_ypos;
 		f->vy = 0;
 		f->grounded = 1;
 		f->hasjump = f->maxjumps;
@@ -304,7 +325,7 @@ void FighterUpdate(Fighter *f){ /* for movement and physics stuff*/
 
 
 
-
+/** for changing the fighter's state*/
 void ChangeState(Fighter* f, State_T st){
 	if(f->state != st){
 		f->state = st;
@@ -317,6 +338,7 @@ void ChangeState(Fighter* f, State_T st){
 
 }
 
+/** apply a jump*/
 void Jump(Fighter* f){
 	if(f->state!=DEAD&&f->hitstun<0&&f->hasjump>0&&f->jumptimer<0){
 	/*	ChangeState(f,JUMP_G_N);*/
@@ -327,16 +349,17 @@ void Jump(Fighter* f){
 	}
 }
 
+/** apply an attack*/
 void Attack(Fighter* f,Attack_T atk){
-	ChangeState(f,ATTACKING);
 	f->atktype = atk;
+	ChangeState(f,ATTACKING);
 
 }
 
+/** get damaged*/
 void TakeHit(Fighter* f, int dmg, int kback, int stun){
 	f->health -= dmg;
 	f->hitstun = stun;
-//	f->y-=2;
 }
 
 

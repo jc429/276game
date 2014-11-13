@@ -3,73 +3,77 @@
 
 #include "graphics.h"
 
-typedef enum{ /*List of Characters in the game*/
+/** List of Characters in the game*/
+typedef enum{ 
 	NOTDOOM = 0, /*buggy test case*/
 	DOOM = 1,
 	WADDLE = 2
 } Character_T;
 
-typedef struct Fighter_T{
-	Fighter_T* opponent;
-	Character_T chr;	/*what character are we?*/
-	int controls;		/*used to lock the controls (0 = locked)*/
-	Uint8 victories;	/*for tracking rounds won*/
+/** Fighter struct*/
+typedef struct Fighter{
+	struct Fighter* opponent;	/**< pointer to the other guy*/
+	Character_T chr;			/**< what character are we?*/
+	int controls;				/**< used to lock the controls (0 = locked)*/
+	Uint8 victories;			/**< for tracking rounds won*/
 /* Animation*/
-	int t_width,t_height,t_per_row; /*tile width, height, and num per row*/
+	int t_width,	/**< tile width*/
+		t_height,	/**< tile height*/
+		t_per_row;	/**< num tiles per row on spritesheet*/
 	/*these 3 just point to either the left or right version of each sprite to make code simpler*/
-	Sprite* f_sprite;	/*the actual graphics of the fighter (the part that will be visible during normal gameplay)*/
-	Sprite* f_hitbox;	/*the hitboxes of the fighter (used for dealing damage an determining damage/knockback/hitstun)*/
-	Sprite* f_hurtbox;	/*the hurtboxes of the fighter (the part that receives damage)*/
-	Sprite* f_spritel;	/*facing left*/
-	Sprite* f_spriter;	/*facing right*/
-	Sprite* f_hitboxl;
-	Sprite* f_hitboxr;
-	Sprite* f_hurtboxl;
-	Sprite* f_hurtboxr;	
-	int frame;			/*what frame of animation we are on (in regards to the entire sprite sheet)*/
-	int anim_seed;		/*first frame of current animation*/
-	int anim_length;	/*length of current animation*/
-	int facing;			/* -1 if facing left, 1 if facing right. 0 if anything else*/
-	int state;			/*uses a state enum to check attacking, in block, in stun, idle, etc */
-	int atktype;		/* which attack are we using? */
+	Sprite* f_sprite;	/**< the actual graphics of the fighter (the part that will be visible during normal gameplay)*/
+	Sprite* f_hitbox;	/**< the hitboxes of the fighter (used for dealing damage an determining damage/knockback/hitstun)*/
+	Sprite* f_hurtbox;	/**< the hurtboxes of the fighter (the part that receives damage)*/
+	Sprite* f_spritel;	/**< sprite facing left*/
+	Sprite* f_spriter;	/**< sprite facing right*/
+	Sprite* f_hitboxl;	/**< hitbox facing left*/
+	Sprite* f_hitboxr;	/**< hitbox facing right*/
+	Sprite* f_hurtboxl; /**< hurtbox facing left*/
+	Sprite* f_hurtboxr;	/**< hurtbox facing right*/
+	int frame;			/**< what frame of animation we are on (in regards to the entire sprite sheet)*/
+	int anim_seed;		/**< first frame of current animation*/
+	int anim_length;	/**< length of current animation*/
+	int facing;			/**< -1 if facing left, 1 if facing right. 0 if anything else*/
+	int state;			/**< uses a state enum to check attacking, in block, in stun, idle, etc */
+	int atktype;		/**< which attack are we using? */
 /* Position*/
-	int x,y;			/*current x and y position*/
-	int x_prev,y_prev;	/*last non-special x and y (for throws and stuff)*/
-	int x_off,y_off;	/*offset from character's 'point' (usually middle of feet) to the top left corner of the frame)*/
-	int bbox_w,bbox_h,bbox_x_off,bbox_y_off;	/*the rectangle of the player's bounding box (used for stage collision)*/
-	int vx,vy;			/*x/y velocity/acceleration*/
+	int x,y;			/**< current x and y position*/
+	int x_prev,y_prev;	/**< last non-special x and y (for throws and stuff)*/
+	int x_off,y_off;	/**< offset from character's 'point' (usually middle of feet) to the top left corner of the frame)*/
+	int bbox_w,bbox_h,bbox_x_off,bbox_y_off;	/**< the rectangle of the player's bounding box (used for stage collision)*/
+	int vx,vy;			/**< x/y velocity/acceleration*/
 	int accx,accy;
 /* Movement*/
-	int grounded;
-	int jumptimer;	/*used to prevent wasting all jumps immediately*/
-	int hasjump;	/*number of jumps remaining before you have to land*/
-	int maxjumps;	/*total number of jumps available*/
-	int jumpspeed;
-	int jumpheight;
-	int weight;	/*affects knockback, fall speed*/
-	int fallspeed;
-	int airdrift; /*affects how much horizontal movement you can get in the air*/
-	int walkspeed;
-	int runspeed;
-	int crawlspeed;
-	int dashspeed; 
-	int dashlength; /*how far forward the dash goes before ending*/
-	int airdashspeed;
-	int airdashlength;
+	int grounded;	/**< "bool" to check if grounded*/
+	int jumptimer;	/**< used to prevent wasting all jumps immediately*/
+	int hasjump;	/**< number of jumps remaining before you have to land*/
+	int maxjumps;	/**< total number of jumps available*/
+	int jumpspeed;	/**< how fast the fighter jumps*/
+	int jumpheight;	/**< how high the fighter can jump*/
+	int weight;		/**< affects knockback, fall speed*/
+	int fallspeed;	/**< this should be obvious*/
+	int airdrift;	/*affects how much horizontal movement you can get in the air*/
+	int walkspeed;	/**< walk speed*/
+	int runspeed;	/**< run speed*/
+	int crawlspeed;	/**< speed while holding down+forward (if the character can crouch)*/
+	int dashspeed;	/**< speed of a dash*/
+	int dashlength; /**< how far forward the dash goes before ending*/
+	int airdashspeed;	/**< speed of an airdash*/
+	int airdashlength;	/**< length of an air dash*/
 /* Combat*/
-	int health;		/*current health*/
-	int healthmax;	/*max health	*/
-	int shield; /* current strength of guard, affects chip damage and shield break*/
-	int shieldmax;	/* max strength of guard, affects chip damage and shield break*/
-	int meter; /*amount of meter in fuel gauge, used for movement options and hypers*/
-	int hitstun; /* hitstun timer - getting hit sets it to some number, hitstun decrements every frame.*/
-	int shieldstun; /*stun for when you hit a shield*/
-	int attackstun;	/*how long after initiating an attack that you can move*/
+	int health;		/**< current health*/
+	int healthmax;	/**< max health	*/
+	int shield;		/**< current strength of guard, affects chip damage and shield break*/
+	int shieldmax;	/**< max strength of guard, affects chip damage and shield break*/
+	int meter;		/**< amount of meter in fuel gauge, used for movement options and hypers*/
+	int hitstun;	/**< hitstun timer - getting hit sets it to some number, hitstun decrements every frame.*/
+	int shieldstun; /**< stun for when you hit a shield*/
+	int attackstun;	/**< how long after initiating an attack that you must wait before you can move/cancel the animation*/
 
 } Fighter;
 
 
-
+/** Fighter States */
 typedef enum{
 	INTRO,
 	/*MOVEMENT*/

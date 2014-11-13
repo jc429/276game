@@ -7,6 +7,8 @@
 #define XRES		1024
 #define YRES		768
 
+
+
 struct
 {
 	Uint32 state;
@@ -15,13 +17,13 @@ struct
 	Uint16  x, y;
 }Mouse;
 
-SDL_Surface *screen; /*pointer to the draw buffer*/
-SDL_Surface *buffer; /*pointer to the background image buffer*/
-SDL_Surface *videobuffer; /*pointer to the actual video surface*/
-SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
+SDL_Surface *screen;		/*pointer to the draw buffer*/
+SDL_Surface *buffer;		/*pointer to the background image buffer*/
+SDL_Surface *videobuffer;	/*pointer to the actual video surface*/
+SDL_Rect Camera;			/*x & y are the coordinates for the background map, w and h are of the screen*/
 Sprite SpriteList[MaxSprites];
-Sprite *Msprite;	/* mouse sprite*/
-Sprite *Point;		/* point sprite used to debug player position*/
+Sprite *Msprite;			/* mouse sprite*/
+Sprite *Point;				/* point sprite used to debug player position*/
 int NumSprites;
 Uint32 NOW;					/*the current time since program started*/
 
@@ -29,6 +31,8 @@ Uint32 NOW;					/*the current time since program started*/
 Uint32 rmask,gmask,bmask,amask;
 ScreenData  S_Data;
 
+const char *GameName;		/*The name of the game*/
+const char *IconName;		/*the location of the icon for the game*/
 
 void Init_Graphics()
 {
@@ -108,8 +112,8 @@ void Init_Graphics()
     SDL_ShowCursor(SDL_DISABLE);/*don't show the mouse */
     SDL_EnableKeyRepeat(0,SDL_DEFAULT_REPEAT_INTERVAL); /*disable key repeating*/
 
-	const char *GameName = "DR. WADDLE'S TOTALLY NOT SMASH BROS FIGHTING SIMULATOR 2015";
-    const char *IconName = "ThereWillBeAnIconOneDay";
+	GameName = "DR. WADDLE'S TOTALLY NOT SMASH BROS FIGHTING SIMULATOR 2015";
+    IconName = "ThereWillBeAnIconOneDay";
     SDL_WM_SetCaption(GameName,IconName);
 }
 
@@ -161,7 +165,7 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey, int fpl)
       return &SpriteList[i];
     }
   }
-  /*makesure we have the room for a new sprite*/
+  /*makesure we have the room for a new sprite*/ 
   if(NumSprites + 1 >= MaxSprites)
   {
         fprintf(stderr, "Maximum Sprites Reached.\n");
@@ -798,14 +802,25 @@ void DrawBG(char* bgloc){
 	if(bg != NULL)
 		SDL_BlitSurface(bg,NULL,buffer,NULL);
 }
-
+	
 void DrawMeters(Fighter* f1,Fighter* f2){
-	int HPloc_y = 60;
-	int HPoff_x = 100;/*x offset from middle of screeen*/
-	int HPlen = 400;
-	int HPht = 15;
-	for(int i=0;i<HPlen;i++){
-		for(int j=0;j<HPht;j++){
+	int HPloc_y;	/*y offset from top of screen*/
+	int HPoff_x;	/*x offset from middle of screeen*/
+	int HPlen;		/*length of hp bar*/
+	int HPht;		/*thickness of hp bar*/
+	int rndoff_x;	/*offset from middle of screen for round icons*/
+	int rndoff_y;	/*offset from top of screen - round icons*/
+	int rndsize;	/*size of round icons*/
+	int rndspace;	/*space between round icons*/
+	int numrounds;	/*number of round icons*/
+	int r,i,j;		/*iterators for things*/
+
+	HPloc_y = 60;
+	HPoff_x = 100;/*x offset from middle of screeen*/
+	HPlen = 400;
+	HPht = 15;
+	for(i=0;i<HPlen;i++){
+		for(j=0;j<HPht;j++){
 			/*needs to be replaced with a percentage calculation rather than fixed number*/
 			if(i < f1->health)
 				DrawPixel(screen,200,200,0,(512-HPoff_x-i+j),HPloc_y+j);
@@ -817,14 +832,14 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 				DrawPixel(screen,255,80,80,(512+HPoff_x+i-j),HPloc_y+j);
 		}
 	}
-	int rndoff_x = 100;
-	int rndoff_y = 80;
-	int rndsize = 8;
-	int rndspace = 5;
-	int numrounds = 3;
-	for(int r = 0; r < numrounds; r++){
-		for(int i = 0; i < rndsize; i++){
-			for(int j = 0; j < rndsize; j++){
+	rndoff_x = 100;
+	rndoff_y = 80;
+	rndsize = 8;
+	rndspace = 5;
+	numrounds = 3;
+	for(r = 0; r < numrounds; r++){
+		for(i = 0; i < rndsize; i++){
+			for(j = 0; j < rndsize; j++){
 				if(r < f1->victories)
 					DrawPixel(screen,90,180,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
 				else
@@ -841,7 +856,9 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 
 
 void DrawNextRoundTimer(int time){
-	for(int i=0;i<time;i++){
+	int i;
+
+	for(i=0;i<time;i++){
 		DrawPixel(screen,200,0,0,512+i,69); 
 		DrawPixel(screen,200,0,0,512+i,70); 
 		DrawPixel(screen,200,0,0,512+i,71); 
