@@ -25,8 +25,15 @@ void CleanUpAll();
 void DrawUpdate();
 void DrawNextRoundTimer(int time);
 void InitVersus();
+void UpdateVersus();
+void InitMenu();
+void UpdateMenu();
 void NextRound();
 void NextGame();
 void GamePause();
+void GoToMenu();
+void GoToVersus();
+void DrawMainMenu();
+void DrawVersus();
 
 #endif

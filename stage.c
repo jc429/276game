@@ -16,10 +16,24 @@ void LoadStage(StageList stagesel){
 	switch(stagesel){
 		case ST_PLATFORM:
 			st.bg = "images/bgimage1.png";
-			
+			layer.layerpath = "images/bgimage2.png";
+				layer.movescale = 1;
+				layer.w = 1536;
+				layer.h = 1152;
+				layer.offx = layer.w*0.5;
+				layer.offy = layer.h*0.5;
+				layer.x = 512;
+				layer.y = 768*0.5;
+
 			platform.p_ypos = 540;
 			platform.p_left = 220;
 			platform.p_right = 790;
+			platform.next=NULL;
+			//	platform.next = (Platform*)malloc(sizeof(Platform));
+		//	platform.next->p_ypos = 740;
+		//	platform.next->p_left = 0;
+		//	platform.next->p_right = 1024;
+		//	platform.next->next=NULL;
 			
 			st.P1spawn= 270;
 			st.P2spawn = 740;
@@ -30,6 +44,7 @@ void LoadStage(StageList stagesel){
 			platform.p_ypos = 550;
 			platform.p_left = 0;
 			platform.p_right = 1025;
+			layer.layerpath = NULL;
 			st.P1spawn = 200;
 			st.P2spawn = 820;
 			break;
@@ -52,5 +67,18 @@ void DrawStage(StageList stage){
 		fg = LoadSprite("images/stage.png",1024,768, 1);
 	if(fg!=NULL)
 		DrawSprite(fg,screen,0,0,0);
+
+	if(st.layer_list->layerpath!=NULL){
+		DrawLayer(st.layer_list);
+		
+	st.layer_list->x++;
+	}
+
+}
+
+void DrawLayer(StageLayer* layer){
+	Sprite* sp = LoadSprite(layer->layerpath,layer->w,layer->h, 1);
+		
+	DrawSprite(sp,screen,layer->x-layer->offx,layer->y-layer->offy,0);
 	
 }

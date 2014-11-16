@@ -15,8 +15,8 @@ typedef struct Platform{
 } Platform;
 
 typedef struct StageLayer{
-	int depth;
-	int x,y;
+	int movescale;		/*how much this layer moves in relation to the platforms - first layer(bg) should be 0, platforms layer should be 1*/
+	int x,y,w,h;
 	int offx,offy;
 	char* layerpath;
 	StageLayer* next;
@@ -34,7 +34,7 @@ typedef struct Stage{
 void LoadStage(StageList stage);
 void UpdateStage();
 void DrawStage(StageList stage);
-
+void DrawLayer(StageLayer* layer);
 
 
 #endif

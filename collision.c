@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "fighter.h"
 #include "graphics.h"
-
+#include "stage.h"
 extern SDL_Surface *screen;
 
 void CollisionCheck(Fighter* f){
@@ -115,6 +115,25 @@ void CollisionCheck(Fighter* f){
 		
 	
 }
+
+bool CollidePlatform(Fighter* f, Platform* p){
+	if((f->y+f->vy > p->p_ypos)&&(f->x > p->p_left)
+		&&(f->x < p->p_right)/*if we would be past the floor this frame*/
+		&&((f->y)-p->p_ypos < 5)) /*if we're coming from above or really close from below*/
+	{
+		f->vy = 0;
+		f->grounded = 1;
+		f->hasjump = f->maxjumps;
+		f->y = p->p_ypos;
+		return true;
+	}
+	
+	if(p->next)
+		return CollidePlatform(f,p->next);
+	else
+		return false;
+}
+
 
 Uint16 Max(Uint16 a, Uint16 b){
 	if (a >= b) return a;

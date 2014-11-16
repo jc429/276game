@@ -4,6 +4,11 @@
 #include "graphics.h"
 
 
-void DrawMenu(){
+void DrawMenus(){
 
+}
+
+void DrawMenuBG(){
+	char* menuBG = "images/menubg.png";
+	DrawBG(menuBG);
 }

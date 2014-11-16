@@ -17,7 +17,6 @@ int nexttimer;				/*timer until the next round*/
 Uint8 pause;					/*pause flag*/
 Uint8 p1input = 00000000;	/*lrudabxy - order of buttons mapped to bits*/
 Uint8 p2input = 00000000;
-char* pauseloc;				/*location of the pause screen*/
 Sprite* pausescr;			/*the pause screen*/
 Sprite* p1vic;				/*p1 victory screen*/
 Sprite* p2vic;				/*p2 victory screen*/
@@ -27,61 +26,42 @@ Uint8* keys;				/*keys pressed*/
 int i,j,k,l;				/*iterators*/
 int debuginputs;			/*Show key presses?*/
 int bsize;					/*size of the icons for each key*/
+int pausetimer;				/*prevents pause from being spammed every frame*/
+
+int done;					/*is the game done running?*/
 
 /*this program must be run from the directory directly below images and src, not from within src*/
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
 int main(int argc, char *argv[])
 {
-	int done;
+	
+	debuginputs = 1,bsize = 5;
 
 	/*defaults for placeholder reasons*/
 	c1 = DOOM;
 	c2 = WADDLE;
-	stage = ST_PLATFORM;
+	stage = ST_FIELD;
 	/**/
 	pause = 0;
 
 	Init_All();
-	GameState = VERSUS;
-	done = 0;
-	nexttimer = -1;
 	do
 	{   
+		pausetimer--;
 		InputControl();
-		if(!pause){		
-			Update_All();
-			DrawUpdate();
-			if(nexttimer>0){
-				if(f2.state==DEAD && f1.state==DEAD)
-					DrawSprite(drawvic,screen,0,0,0);
-				else if(f2.state==DEAD)
-					DrawSprite(p1vic,screen,0,0,0);
-				else
-					DrawSprite(p2vic,screen,0,0,0);
-				nexttimer--;
-			}if(nexttimer==0){
-				nexttimer--;
-			/*	c1 = DOOM;
-				c2 = DOOM;*/
-				if(stage==ST_PLATFORM)
-					stage = ST_FIELD;
-				else
-					stage = ST_PLATFORM;
-				ClearFighter(&f1);
-				ClearFighter(&f2);
-				InitVersus();
-			}
-			NextFrame();
-			
-			if(endgame){
-				done = 1;
-			}
-			
-			ResetBuffer();
-
+		if(GameState==VERSUS){
+			DrawVersus();
+			UpdateVersus();
+		}else if(GameState==MAIN_MENU){
+			DrawMainMenu();
+			UpdateMenu();
 		}
-		else
-			DrawPause(pausescr);
+			NextFrame();		
+		if(endgame){
+			done = 1;
+		}
+			
+		ResetBuffer();
 	}while(!done);
 	exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/
 	return 0;
@@ -89,9 +69,10 @@ int main(int argc, char *argv[])
 
 void Init_All()
 {
+	done = 0;
+	nexttimer = -1;
 	Init_Graphics();
-	
-	InitVersus();
+	InitMenu();
 	InitMouse();
 	atexit(CleanUpAll);
 }
@@ -100,29 +81,12 @@ void InitVersus(){
 	LoadStage(stage);
 	InitFighters(c1,c2);
 	DrawBG(HUDBG);
-	pauseloc = "images/pause.png";
-	pausescr = LoadSprite(pauseloc,1024,768,1);
+	pausescr = LoadSprite("images/pause.png",1024,768,1);
 	p1vic = LoadSprite("images/p1win.png",1024,768,1);
 	p2vic = LoadSprite("images/p2win.png",1024,768,1);
 	drawvic = LoadSprite("images/draw.png",1024,768,1);
 }
 
-void Update_All()
-{
-	if(GameState==VERSUS)
-	{
-		if((f2.state!=DEAD)&&(f1.state!=DEAD)){
-			FighterInputs(&f1,p1input);
-			FighterInputs(&f2,p2input);
-			FighterThink(&f2);
-			FighterThink(&f1);
-			FighterUpdate(&f1);
-			FighterUpdate(&f2);
-		}
-		UpdateStage();
-	}
-		
-}
 
 void Quit(){
 	if(pause)
@@ -138,30 +102,38 @@ void CleanUpAll()
 
 void DrawUpdate(){
 	if(GameState==MAIN_MENU){
-		DrawMenu();
-		DrawMouse();
+		
+		
 	}
 
 	if(GameState==VERSUS){
-		DrawStage(stage);
-		DrawFighters(screen);
-		DrawMeters(&f1,&f2);	
-		DrawNextRoundTimer(nexttimer);
+		
 	}
 	
-	/*int mx,my;
-	if(SDL_GetMouseState(&mx,&my))
-    {
-		DrawSprite(tile,buffer,(mx /32) * 32,(my /32) * 32,0); 
-    }*/
+	
 }
-
+void DrawMainMenu(){
+	DrawMenus();
+	DrawMouse();
+}
+void DrawVersus(){
+	DrawStage(stage);
+	DrawFighters(screen);
+	DrawMeters(&f1,&f2);	
+	DrawNextRoundTimer(nexttimer);
+}
 void GamePause(){
-	if(pause==0){
-		DrawSprite(pausescr,screen,0,0,1);
-		pause = 1;
-	}else
-		pause = 0;
+	if(GameState==VERSUS){
+		pausetimer = 10;
+		if(pause==0){
+//			DrawBG("images/pause.png");
+//			DrawSprite(pausescr,screen,0,0,1);
+			pause = 1;
+		}else
+			pause = 0;
+	}
+	else
+		GoToVersus();
 }
 void Die(Fighter* f){
 		
@@ -196,8 +168,10 @@ void InputControl(){
 	p1input = 0;
 	p2input = 0;
 	keys = SDL_GetKeyState(NULL);
-	if(keys[SDLK_SPACE])
-		GamePause();
+	if(keys[SDLK_SPACE]){
+		if(pausetimer<=0)
+			GamePause();
+	}
 	if(keys[SDLK_ESCAPE])
 		Quit();
 
@@ -237,7 +211,6 @@ void InputControl(){
 		p2input |= 1;
 
 
-	debuginputs = 1,bsize = 5;
 	if(debuginputs){
 		for(i=0;i<8;i++){
 			if(p1input & 1<<i)
@@ -263,127 +236,60 @@ void InputControl(){
 
 }
 
-	/*SDL_Event events;
-	while(SDL_PollEvent(&events)){
-		switch(events.type){
-			case SDL_KEYDOWN:
-				switch(events.key.keysym.sym){
-					case SDLK_SPACE:
-						GamePause();
-						break;
-					case SDLK_a:
-						p1input |= 1<<7;
-						break;
-					case SDLK_d:
-						p1input |= 1<<6;
-						break;
-					case SDLK_w:
-						p1input |= 1<<5;
-						break;
-					case SDLK_s:
-						p1input |= 1<<4;
-						break;
-					case SDLK_z:
-						p1input |= 1<<3;
-						break;
-					case SDLK_x:
-						p1input |= 1<<2;
-						break;
-					case SDLK_c:
-						p1input |= 1<<1;
-						break;
-					case SDLK_v:
-						p1input |= 1;
-						break;
-
-					case SDLK_LEFT:
-						p2input |= 1<<7;
-						break;
-					case SDLK_RIGHT:
-						p2input |= 1<<6;
-						break;
-					case SDLK_UP:
-						p2input |= 1<<5;
-						break;
-					case SDLK_DOWN:
-						p2input |= 1<<4;
-						break;
-					case SDLK_p:
-						p2input |= 1<<3;
-						break;
-					case SDLK_o:
-						p2input |= 1<<2;
-						break;
-					case SDLK_i:
-						p2input |= 1<<1;
-						break;
-					case SDLK_u:
-						p2input |= 1;
-						break;
-
-
-				
-				
-				}
-				continue;
-			case SDL_KEYUP:
-				switch(events.key.keysym.sym){
-					case SDLK_ESCAPE:
-						Quit();
-						break;
-					case SDLK_a:
-						p1input &= 0<<7;
-						break;
-					case SDLK_d:
-						p1input &= 0<<6;
-						break;
-					case SDLK_w:
-						p1input &= 0<<5;
-						break;
-					case SDLK_s:
-						p1input &= 0<<4;
-						break;
-					case SDLK_z:
-						p1input &= 0<<3;
-						break;
-					case SDLK_x:
-						p1input &= 0<<2;
-						break;
-					case SDLK_c:
-						p1input &= 0<<1;
-						break;
-					case SDLK_v:
-						p1input &= 0;
-						break;
-					case SDLK_LEFT:
-						p2input &= 0<<7;
-						break;
-					case SDLK_RIGHT:
-						p2input &= 0<<6;
-						break;
-					case SDLK_UP:
-						p2input &= 0<<5;
-						break;
-					case SDLK_DOWN:
-						p2input &= 0<<4;
-						break;
-					case SDLK_p:
-						p2input &= 0<<3;
-						break;
-					case SDLK_o:
-						p2input &= 0<<2;
-						break;
-					case SDLK_i:
-						p2input &= 0<<1;
-						break;
-					case SDLK_u:
-						p2input &= 0;
-						break;
-				}
-			default:
-				continue;
-			
-
-
+void UpdateVersus(){
+	if(!pause){	
+		
+		if((f2.state!=DEAD)&&(f1.state!=DEAD)){
+			FighterInputs(&f1,p1input);
+			FighterInputs(&f2,p2input);
+			FighterThink(&f2);
+			FighterThink(&f1);
+			FighterUpdate(&f1);
+			FighterUpdate(&f2);
 		}
-	}*/
+		UpdateStage();
+		if(nexttimer>0){
+			if(f2.state==DEAD && f1.state==DEAD)
+				DrawSprite(drawvic,screen,0,0,0);
+			else if(f2.state==DEAD)
+				DrawSprite(p1vic,screen,0,0,0);
+			else
+				DrawSprite(p2vic,screen,0,0,0);
+			nexttimer--;
+		}if(nexttimer==0){
+			nexttimer--;
+			if(stage==ST_PLATFORM)
+				stage = ST_FIELD;
+			else
+				stage = ST_PLATFORM;
+			ClearFighter(&f1);
+			ClearFighter(&f2);
+			InitVersus();
+		}
+
+	}
+	else
+		DrawPause(pausescr);
+}
+
+void InitMenu(){
+	DrawMenuBG();
+}
+
+void UpdateMenu(){
+	int mx,my;
+	if(SDL_GetMouseState(&mx,&my))
+    {
+		DrawPixel(buffer,255,250,0,mx,my);
+    }
+}
+
+void GoToVersus(){
+	GameState = VERSUS;	
+	InitVersus();
+}
+
+void GoToMenu(){
+	GameState = MAIN_MENU;
+	InitMenu();
+}

@@ -290,18 +290,18 @@ void FighterThink(Fighter *f){
 /** for movement and physics stuff*/
 void FighterUpdate(Fighter *f){ 
 	
-	if((f->y+f->vy > st.platform_list->p_ypos)&&(f->x > st.platform_list->p_left)
-		&&(f->x < st.platform_list->p_right)/*if we would be past the floor this frame*/
-		&&((f->y)-st.platform_list->p_ypos < 5)) /*if we're coming from above or really close from below*/
-	{
-		f->y = st.platform_list->p_ypos;
-		f->vy = 0;
-		f->grounded = 1;
-		f->hasjump = f->maxjumps;
+	if(CollidePlatform(f,st.platform_list)){
+		
+		
 	}else{
 		f->y += f->vy;
 		f->vy+=2; 
+		if(f->grounded&&f->jumptimer<=0){
+			f->grounded=0;
+			f->hasjump--;
+		}
 	}
+	
 
 	f->x+=f->vx;
 

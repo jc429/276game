@@ -2,6 +2,7 @@
 #define __Fighter__
 
 #include "graphics.h"
+#include "stage.h"
 
 /** List of Characters in the game*/
 typedef enum{ 
@@ -199,10 +200,8 @@ void ChangeState(Fighter* f, State_T state);
 void Jump(Fighter* f);
 void Attack(Fighter* f,Attack_T atk);
 
-void Update_All();
-
 void CollisionCheck(Fighter* f);
-
+bool CollidePlatform(Fighter* f, Platform* p);
 
 void TakeHit(Fighter* f, int dmg, int kback, int stun);
 void Die(Fighter* f);

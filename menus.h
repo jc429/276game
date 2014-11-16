@@ -2,6 +2,6 @@
 #define _MENUS_
 
 void DrawMenuBG();
-void DrawMenu();
+void DrawMenus();
 
 #endif
