@@ -280,8 +280,12 @@ void FighterThink(Fighter *f){
 		if(f->jumptimer>=0)
 			f->jumptimer--;
 
-		if(f->hitstun>=0)
+		if(f->hitstun>=0){
+			if(f->hitstun==0){
+				f->combo = 0;
+			}
 			f->hitstun--;
+		}
 		else if(f->state==HIT)
 			ChangeState(f,IDLE);
 	}
@@ -358,8 +362,15 @@ void Attack(Fighter* f,Attack_T atk){
 
 /** get damaged*/
 void TakeHit(Fighter* f, int dmg, int kback, int stun){
-	f->health -= dmg;
+	float minscale = 0.25;
+	float scaling = 1;
+	for(int i = 0; i < f->combo; i++) /* ghetto exponent math let's go*/
+		scaling*=0.85;
+	if(scaling < minscale)
+		scaling = minscale;
+	f->health -= dmg*scaling;
 	f->hitstun = stun;
+	f->combo++;
 }
 
 

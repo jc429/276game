@@ -68,9 +68,10 @@ void CollisionCheck(Fighter* f){
 						/*eventually replace this with a check for the opponent's attack hitbox*/
 					}
 
-					hit = 1;
-					if((pxla & 0x00ff0000) >> 16>(bestpx & 0x00ff0000) >> 16) /*for now just pick based off highest damage*/
+					if((pxla & 0x00ff0000) >> 16 > (bestpx & 0x00ff0000) >> 16){ /*for now just pick based off highest damage*/
 						bestpx = pxla;
+						hit = 1;
+					}
 					/* it would probably be ideal to go with lowest damage/stun, to encourage better positioning for attacks*/
 					
 				}
@@ -107,7 +108,7 @@ void CollisionCheck(Fighter* f){
 				}
 			}
 				/*??????????????????????????????????????????????????????*/
-			if(hit!=0)
+			if(damage>0&&stun>0)
 				TakeHit(f->opponent,damage,angle,stun);
 
 		}

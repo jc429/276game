@@ -16,7 +16,7 @@ typedef enum{
 	S_SELECT,
 	OPTIONS,
 	VERSUS,
-	PAUSE
+	C_CREATOR
 }GameState_T;
 
 GameState_T GameState;
@@ -26,14 +26,18 @@ void DrawUpdate();
 void DrawNextRoundTimer(int time);
 void InitVersus();
 void UpdateVersus();
-void InitMenu();
-void UpdateMenu();
 void NextRound();
 void NextGame();
 void GamePause();
 void GoToMenu();
-void GoToVersus();
 void DrawMainMenu();
+void GoToVersus();
 void DrawVersus();
+void GoToCharSel();
+void DrawCharSel();
+void GoToStageSel();
+void DrawStageSel();
+void GoToCharCr();
+void DrawCharCr();
 
 #endif

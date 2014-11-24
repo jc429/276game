@@ -2,6 +2,7 @@
 
 extern SDL_Surface *screen; /*pointer to the screen*/
 extern SDL_Surface *buffer; /*pointer to the draw buffer*/
+extern SDL_Surface *videobuffer;	/*pointer to the actual video surface*/
 extern SDL_Rect Camera;		
 extern Fighter f1,f2;		/*fighter 1 and fighter 2*/
 
@@ -10,7 +11,7 @@ extern Fighter f1,f2;		/*fighter 1 and fighter 2*/
 #define NEXTTIME 60
 #define NUMROUNDS 3
 
-StageList stage;			/*the selected stage*/
+Stage_T stage;			/*the selected stage*/
 Character_T c1,c2;			/*the selected characters*/
 int endgame;				/*end the game?*/
 int nexttimer;				/*timer until the next round*/
@@ -40,7 +41,7 @@ int main(int argc, char *argv[])
 	/*defaults for placeholder reasons*/
 	c1 = DOOM;
 	c2 = WADDLE;
-	stage = ST_FIELD;
+	stage = ST_PLATFORM;
 	/**/
 	pause = 0;
 
@@ -238,7 +239,7 @@ void InputControl(){
 
 void UpdateVersus(){
 	if(!pause){	
-		
+		UpdateStage(stage);
 		if((f2.state!=DEAD)&&(f1.state!=DEAD)){
 			FighterInputs(&f1,p1input);
 			FighterInputs(&f2,p2input);
@@ -247,7 +248,6 @@ void UpdateVersus(){
 			FighterUpdate(&f1);
 			FighterUpdate(&f2);
 		}
-		UpdateStage();
 		if(nexttimer>0){
 			if(f2.state==DEAD && f1.state==DEAD)
 				DrawSprite(drawvic,screen,0,0,0);
@@ -272,17 +272,9 @@ void UpdateVersus(){
 		DrawPause(pausescr);
 }
 
-void InitMenu(){
-	DrawMenuBG();
-}
 
-void UpdateMenu(){
-	int mx,my;
-	if(SDL_GetMouseState(&mx,&my))
-    {
-		DrawPixel(buffer,255,250,0,mx,my);
-    }
-}
+
+
 
 void GoToVersus(){
 	GameState = VERSUS;	
@@ -293,3 +285,16 @@ void GoToMenu(){
 	GameState = MAIN_MENU;
 	InitMenu();
 }
+
+void GoToCharSel(){
+	GameState = C_SELECT;
+}
+void GoToStageSel(){
+	GameState = S_SELECT;
+}
+void GoToCharCr(){
+	GameState = C_CREATOR;
+}
+void DrawCharSel();
+void DrawStageSel();
+void DrawCharCr();

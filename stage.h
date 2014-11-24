@@ -5,7 +5,7 @@ typedef enum {
 	ST_FIELD=0,
 	ST_PLATFORM=1,
 	ST_DEBUG=2
-} StageList;
+} Stage_T;
 
 typedef struct Platform{
 	int p_left;
@@ -15,7 +15,7 @@ typedef struct Platform{
 } Platform;
 
 typedef struct StageLayer{
-	int movescale;		/*how much this layer moves in relation to the platforms - first layer(bg) should be 0, platforms layer should be 1*/
+	float movescale;		/*how much this layer moves in relation to the platforms - first layer(bg) should be 0, platforms layer should be 1*/
 	int x,y,w,h;
 	int offx,offy;
 	char* layerpath;
@@ -31,9 +31,11 @@ typedef struct Stage{
 	int P2spawn;
 } Stage;
 
-void LoadStage(StageList stage);
-void UpdateStage();
-void DrawStage(StageList stage);
+void LoadStage(Stage_T stage);
+void UpdateStage(Stage_T stage);
+void SetLayer(StageLayer* layer,float movescale,int x, int y, int w, int h, int offx, int offy, char* path,int hasnext);
+void UpdateLayer(StageLayer* layer);
+void DrawStage(Stage_T stage);
 void DrawLayer(StageLayer* layer);
 
 

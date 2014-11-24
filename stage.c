@@ -11,20 +11,17 @@ int x = 0;
 //int STAGEFLOOR,STAGELEFT,STAGERIGHT,P1SPAWN,P2SPAWN;
 Stage st; 
 Platform platform;
-StageLayer layer;
-void LoadStage(StageList stagesel){
+StageLayer* layer;
+void LoadStage(Stage_T stagesel){
+	
+	layer = (StageLayer*)malloc(sizeof(StageLayer));
 	switch(stagesel){
 		case ST_PLATFORM:
 			st.bg = "images/bgimage1.png";
-			layer.layerpath = "images/bgimage2.png";
-				layer.movescale = 1;
-				layer.w = 1536;
-				layer.h = 1152;
-				layer.offx = layer.w*0.5;
-				layer.offy = layer.h*0.5;
-				layer.x = 512;
-				layer.y = 768*0.5;
-
+			SetLayer(layer,1,512,384,1536,1152,768,576,"images/bgimage2.png",1);
+			SetLayer(layer->next,2,512,384,1536,1152,768,576,"images/bgimage2.png",1);
+			SetLayer(layer->next->next,0,0,0,1024,768,0,0,"images/stage.png",0);
+			
 			platform.p_ypos = 540;
 			platform.p_left = 220;
 			platform.p_right = 790;
@@ -41,44 +38,58 @@ void LoadStage(StageList stagesel){
 		case ST_DEBUG:
 		case ST_FIELD:
 			st.bg = "images/bgtest.png";
-			platform.p_ypos = 550;
+			platform.p_ypos = 600;
 			platform.p_left = 0;
 			platform.p_right = 1025;
-			layer.layerpath = NULL;
+			SetLayer(layer,0,512,660,1722,162,861,81,"images/train.png",0);
+			
 			st.P1spawn = 200;
 			st.P2spawn = 820;
 			break;
 	}
 	st.platform_list = &platform;
-	st.layer_list = &layer;
+	st.layer_list = layer;
 	DrawBG(st.bg);
 	
 }
 
-void UpdateStage(){
-
+void SetLayer(StageLayer* layer,float movescale,int x, int y, int w, int h, int offx, int offy, char* path,int hasnext){
+	layer->movescale = movescale;
+	layer->x = x;
+	layer->y = y;
+	layer->w = w;
+	layer->h = h;
+	layer->offx = offx;
+	layer->offy = offy;
+	layer->layerpath = path;
+	layer->next = NULL;
+	if(hasnext!=0)
+		layer->next = (StageLayer*)malloc(sizeof(StageLayer));
 }
 
+void UpdateStage(Stage_T stage){
+	if(st.layer_list->layerpath!=NULL){
+		UpdateLayer(st.layer_list);
+	}
+}
 
+void UpdateLayer(StageLayer* layer){
+	layer->x += layer->movescale;
+	if(layer->next!=NULL)
+		UpdateLayer(layer->next);
+}
 
-void DrawStage(StageList stage){
-	Sprite *fg=NULL;
-	if(stage == ST_PLATFORM)
-		fg = LoadSprite("images/stage.png",1024,768, 1);
-	if(fg!=NULL)
-		DrawSprite(fg,screen,0,0,0);
+void DrawStage(Stage_T stage){
 
 	if(st.layer_list->layerpath!=NULL){
 		DrawLayer(st.layer_list);
-		
-	st.layer_list->x++;
 	}
 
 }
 
 void DrawLayer(StageLayer* layer){
-	Sprite* sp = LoadSprite(layer->layerpath,layer->w,layer->h, 1);
-		
+	Sprite* sp = LoadSprite(layer->layerpath,layer->w,layer->h, 1);		
 	DrawSprite(sp,screen,layer->x-layer->offx,layer->y-layer->offy,0);
-	
+	if(layer->next!=NULL)
+		DrawLayer(layer->next);
 }

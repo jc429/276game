@@ -70,7 +70,7 @@ typedef struct Fighter{
 	int hitstun;	/**< hitstun timer - getting hit sets it to some number, hitstun decrements every frame.*/
 	int shieldstun; /**< stun for when you hit a shield*/
 	int attackstun;	/**< how long after initiating an attack that you must wait before you can move/cancel the animation*/
-
+	int combo;		/**< what hit of a combo we're currently on, resets when hitstun = 0*/ 
 } Fighter;
 
 
