@@ -26,7 +26,7 @@ void UpdateMenu(){
 }
 
 void DrawMenus(){
-	DrawSprite(testbutton.button,screen,0,0,0);
+	DrawSprite(testbutton.button,screen,testbutton.box.x,testbutton.box.y,0);
 	font = TTF_OpenFont("fonts/font.ttf",16);
 	SDL_Color text_color = {255, 255, 255};
 	textsurf = TTF_RenderText_Solid(font,"Hello buddy",text_color);

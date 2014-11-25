@@ -11,6 +11,9 @@ extern Fighter f1,f2;		/*fighter 1 and fighter 2*/
 #define NEXTTIME 60
 #define NUMROUNDS 3
 
+
+GameState_T GameState;
+
 Stage_T stage;			/*the selected stage*/
 Character_T c1,c2;			/*the selected characters*/
 int endgame;				/*end the game?*/

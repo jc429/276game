@@ -19,7 +19,6 @@ typedef enum{
 	C_CREATOR
 }GameState_T;
 
-GameState_T GameState;
 void Init_All();
 void CleanUpAll();
 void DrawUpdate();

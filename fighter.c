@@ -14,16 +14,7 @@ extern Stage st;
 
 
 /*** Where should this goooooo? ***/
-int framedata[NUMCHARS][NUMANIMS] = {  
-	/*idle, idle2, walk, run, crouch,jumpsq,jump,fall,land,dashf,dashb, */
-	/*For Now: {idle,attack,hit,dead}*/
-	/*each int denotes the starting point for the animation, in a set order*/
-	/*MAKE SURE EVERY INT IS LARGER THAN THE ONE BEFORE IT*/
-	/*there needs to be a final int that isn't a seed, for the final animation's length*/
-	/*DEBUG*/{0, 1, 2, 3, 4} ,   /*  frames for character 1 */
-	/*DOOM*/{0, 20, 25, 26, 27} ,   /*  ex: column 1 is idle, then idle2, then attacking, then hit, etc */
-	/*WADDLE*/{0, 4, 10, 11, 13}  
-};
+extern int framedata[NUMCHARS][NUMANIMS];
 
 /**************************************************************************************************/
 
@@ -113,11 +104,14 @@ void CheckFacing(Fighter* f){
 /** update the fighter's animation frame*/
 void UpdateFrame(Fighter* f){	
 	f->frame += 1;
+	if(f->frame >= (f->anim_length+f->anim_seed))
+		ChangeState(f,IDLE);
+
 	if(f->frame >= (f->anim_length+f->anim_seed)){
 		f->frame = ((f->frame-f->anim_seed)%f->anim_length)+f->anim_seed;
 	}
-	if(f->frame+1 >= (f->anim_length+f->anim_seed))
-		ChangeState(f,IDLE);
+	
+	
 }
 /**************************************************************************************************/
 /** load the fighter's data from a config file*/
@@ -333,11 +327,15 @@ void FighterUpdate(Fighter *f){
 void ChangeState(Fighter* f, State_T st){
 	if(f->state != st){
 		f->state = st;
-		
-		f->anim_seed = framedata[f->chr][st]; /*seed is where the animation begins on the sheet*/
-		f->anim_length = framedata[f->chr][st+1]-framedata[f->chr][st]; /*anim length is just the distance to the next seed*/
-		
+		if(st != ATTACKING){
+			f->anim_seed = framedata[f->chr][st]; /*seed is where the animation begins on the sheet*/
+			f->anim_length = framedata[f->chr][st+1]-framedata[f->chr][st]; /*anim length is just the distance to the next seed*/
+		}else{
+			f->anim_seed = framedata[f->chr][st+f->atktype]; 
+			f->anim_length = framedata[f->chr][st+f->atktype+1]-framedata[f->chr][st+f->atktype]; 
+		}
 		f->frame = f->anim_seed;
+
 	}
 
 }

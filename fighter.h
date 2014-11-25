@@ -133,8 +133,8 @@ typedef enum{
 	GRABBED_FREE,		/*victim being freed from grab*/
 
 	/*OTHER*/
-	HIT = 2,
-	DEAD = 3,
+	HIT = 3,
+	DEAD = 4,
 	BLOCKING,
 	BLOCKING_CR,
 	PUSHBLOCK,			/*will this even have pushblock?*/
@@ -152,12 +152,12 @@ typedef enum{
 } State_T;
 
 typedef enum{
-	ATK_N_P,			/*neutral,forward,back,down,up + punch button, grounded*/
+	ATK_N_P = 0,			/*neutral,forward,back,down,up + punch button, grounded*/
 	ATK_F_P,			
 	ATK_B_P,
 	ATK_D_P,
 	ATK_U_P,
-	ATK_N_K,			/*neutral,forward,back,down,up + kick button, grounded*/
+	ATK_N_K = 1,			/*neutral,forward,back,down,up + kick button, grounded*/
 	ATK_F_K,
 	ATK_B_K,
 	ATK_D_K,
