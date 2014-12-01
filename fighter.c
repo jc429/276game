@@ -3,6 +3,8 @@
 
 #define NUMCHARS 3 /*number of characters in the game*/
 #define NUMANIMS 5 /*animations per character*/
+/*** Where should this goooooo? ***/
+extern int framedata[NUMCHARS][NUMANIMS];
 
 
 
@@ -13,8 +15,6 @@ extern Stage st;
 
 
 
-/*** Where should this goooooo? ***/
-extern int framedata[NUMCHARS][NUMANIMS];
 
 /**************************************************************************************************/
 
@@ -63,10 +63,7 @@ void DrawFighters(SDL_Surface* surf)
 		DrawPlayerPoint(&f2);	
 	}	
 
-	if(f1.state!=HIT&&f1.state!=DEAD)
-		UpdateFrame(&f1);
-	if(f2.state!=HIT&&f2.state!=DEAD)
-		UpdateFrame(&f2);
+	
 }
 
 void DrawChar(Fighter* f, SDL_Surface* screen){
@@ -361,9 +358,10 @@ void Attack(Fighter* f,Attack_T atk){
 /** get damaged*/
 void TakeHit(Fighter* f, int dmg, int kback, int stun){
 	float minscale = 0.25;
+	float hitscale = 0.85;
 	float scaling = 1;
 	for(int i = 0; i < f->combo; i++) /* ghetto exponent math let's go*/
-		scaling*=0.85;
+		scaling*=hitscale;
 	if(scaling < minscale)
 		scaling = minscale;
 	f->health -= dmg*scaling;

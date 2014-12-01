@@ -59,8 +59,11 @@ int main(int argc, char *argv[])
 		}else if(GameState==MAIN_MENU){
 			DrawMainMenu();
 			UpdateMenu();
+		}else if(GameState==C_CREATOR){
+			DrawCharCr();
+			UpdateCharCr();
 		}
-			NextFrame();		
+		NextFrame();		
 		if(endgame){
 			done = 1;
 		}
@@ -250,6 +253,10 @@ void UpdateVersus(){
 			FighterThink(&f1);
 			FighterUpdate(&f1);
 			FighterUpdate(&f2);
+			if(f1.state!=HIT&&f1.state!=DEAD)
+				UpdateFrame(&f1);
+			if(f2.state!=HIT&&f2.state!=DEAD)
+				UpdateFrame(&f2);
 		}
 		if(nexttimer>0){
 			if(f2.state==DEAD && f1.state==DEAD)
@@ -295,9 +302,6 @@ void GoToCharSel(){
 void GoToStageSel(){
 	GameState = S_SELECT;
 }
-void GoToCharCr(){
-	GameState = C_CREATOR;
-}
+
 void DrawCharSel();
 void DrawStageSel();
-void DrawCharCr();

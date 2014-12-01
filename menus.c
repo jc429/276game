@@ -2,15 +2,18 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "graphics.h"
+#include "game.h"
 
 extern SDL_Surface *buffer,*screen;
-Button testbutton;
+Button testbutton, chrbutton;
 TTF_Font *font;
 SDL_Surface *textsurf;
 void InitMenu(){
 	DrawMenuBG();
-	Sprite* spr = LoadSprite("images/button.png",200,60,1);
-	SetButton(&testbutton,0,-1,"hello",spr,spr,spr,spr,500,400,200,60,1,0,100,111,0,0);
+	Sprite* spr = LoadSprite("images/buttonvs.png",200,60,1);
+	SetButton(&testbutton,0,-1,"hello",spr,spr,spr,spr,400,400,200,60,1,0,100,111,0,0);
+	spr = LoadSprite("images/buttoncc.png",200,60,1);
+	SetButton(&chrbutton,0,-1,"hello",spr,spr,spr,spr,400,500,200,60,1,0,100,111,0,0);
 	
 }
 
@@ -18,7 +21,10 @@ void UpdateMenu(){
 	int mx,my;
 	if(SDL_GetMouseState(&mx,&my))
     {
-		DrawPixel(buffer,255,250,0,mx,my);
+		if(MouseInButton(mx,my,&testbutton))
+			GoToVersus();
+		else if(MouseInButton(mx,my,&chrbutton))
+			GoToCharCr();
     }else{
 		DrawPixel(buffer,0,0,0,mx,my);
 
@@ -27,6 +33,9 @@ void UpdateMenu(){
 
 void DrawMenus(){
 	DrawSprite(testbutton.button,screen,testbutton.box.x,testbutton.box.y,0);
+	DrawSprite(chrbutton.button,screen,chrbutton.box.x,chrbutton.box.y,0);
+
+
 	font = TTF_OpenFont("fonts/font.ttf",16);
 	SDL_Color text_color = {255, 255, 255};
 	textsurf = TTF_RenderText_Solid(font,"Hello buddy",text_color);
@@ -57,4 +66,10 @@ void SetButton(Button *button,int buttonID,int hotkey, char *text,Sprite *sprite
   button->color = c1;
   button->hcolor = c2;
   button->centered = centered;
+}
+
+int MouseInButton(int mx, int my, Button *b){
+	if((mx > b->box.x)&&(mx < (b->box.x+b->box.w))&&(my > b->box.y)&&(my < (b->box.y+b->box.h)))
+		return 1;
+	return 0;
 }
