@@ -5,7 +5,7 @@
 
 void CharEdit (int i);
 void (*OnClick)(int);
-void Click();
+void Click(int a,...);
 
 Fighter *efighter;
 extern GameState_T GameState;
@@ -50,12 +50,15 @@ void InitCharCr(){
 	SetButton(&b8,7,Click,-1,"hello",spr,spr,spr,spr,600,500,200,60,1,0,100,111,0,0);
 }
 
-void Click(){
-	LoadFighter(efighter,(Character_T)1);
+void Click(int a,...){
+	va_list args;
+	va_start(args,a);
+	LoadFighter(efighter,(Character_T)va_arg(args,int));
 	efighter->x = 100;
 	efighter->y = 150;
 	loaded = 1;
 	DrawBG("images/menubg3.png");
+	va_end(args);
 }
 
 void DrawCharCr(){
@@ -81,7 +84,7 @@ void UpdateCharCr(){
 	if(SDL_GetMouseState(&mx,&my))
     {
 		if(MouseInButton(mx,my,&b1))
-			b1.onClick();
+			b1.onClick(1,b1.buttonID+1);
     }else{
 		DrawPixel(buffer,0,0,0,mx,my);
 	}

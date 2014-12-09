@@ -4,7 +4,7 @@
 
 typedef struct		/*ripped from project dark*/
 {
-  void (* onClick)();	/*click function*/
+  void (*onClick)(int a,...);	/*click function*/
   Sprite *button;       /*pointer to active button*/
   Sprite *buttons[3];   /*up to 3 different states for button: idle, selected & active*/
   int off;              /*if button is off, it will not be checked against*/
@@ -35,7 +35,7 @@ typedef struct MenuItem
 	struct MenuItem* next;
 }MenuItem;
 
-void SetButton(Button *button,int buttonID, void (*onClick)(),int hotkey, char *text,Sprite *sprite,Sprite *sprite1,Sprite *sprite2,Sprite *sprite3,int x,int y,int w,int h,int shown,int frame,int c1, int c2, int font,int centered);
+void SetButton(Button *button,int buttonID, void (*onClick)(int a,...),int hotkey, char *text,Sprite *sprite,Sprite *sprite1,Sprite *sprite2,Sprite *sprite3,int x,int y,int w,int h,int shown,int frame,int c1, int c2, int font,int centered);
 
 
 void InitMenu();
@@ -44,5 +44,6 @@ void DrawMenuBG();
 void DrawMenus();
 void DrawButton(Button* b);
 int MouseInButton(int mx, int my, Button *b); 
-
+void VersusClick(int a,...);
+void ChrCrClick(int a,...);
 #endif
