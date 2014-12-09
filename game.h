@@ -37,6 +37,7 @@ void DrawCharSel();
 void GoToStageSel();
 void DrawStageSel();
 void GoToCharCr();
+void InitCharCr();
 void DrawCharCr();
 void UpdateCharCr();
 

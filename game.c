@@ -182,6 +182,8 @@ void InputControl(){
 	if(keys[SDLK_ESCAPE])
 		Quit();
 
+
+	
 	if(keys[SDLK_a])
 		p1input |= 1<<7;
 	if(keys[SDLK_d])

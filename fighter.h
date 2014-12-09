@@ -6,9 +6,17 @@
 
 /** List of Characters in the game*/
 typedef enum{ 
-	NOTDOOM = 0, /*buggy test case*/
+	C1 = 0, /*buggy test case*/
+	DEBUG = 0,
+	C2 = 1,
 	DOOM = 1,
-	WADDLE = 2
+	C3 = 2,
+	WADDLE = 2,
+	C4 = 3,
+	C5 = 4,
+	C6 = 5,
+	C7 = 6,
+	C8 = 7
 } Character_T;
 
 /** Fighter struct*/
@@ -185,6 +193,7 @@ void DrawHurtboxes(SDL_Surface* screen);
 void DrawChar(Fighter* f,SDL_Surface* screen);
 void UpdateFrame(Fighter* f);
 void LoadFighter(Fighter*,Character_T);
+char* GetCharPath(int c);
 /*************************************************************/
 void InputControl();
 void FighterInputs(Fighter* f,Uint8 inputs);

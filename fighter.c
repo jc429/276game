@@ -26,6 +26,10 @@ void InitFighters(Character_T p1, Character_T p2)
 	f1.opponent = &f2;
 	f2.opponent = &f1;	
 	
+	f1.controls = 1;
+	f1.y = st.platform_list->p_ypos;
+	f2.controls = 1;
+	f2.y = st.platform_list->p_ypos;
 	f1.x = st.P1spawn;
 	f2.x = st.P2spawn;
 	f1.facing = 1;
@@ -116,12 +120,8 @@ void LoadFighter(Fighter* f, Character_T c){
 	char* filepath;
 	f->chr = c;
 	/*//////////////////////////////////////////////*/
-	if(c==DOOM)
-		filepath = "res/chr/doom.txt";
-	else if(c==WADDLE)
-		filepath = "res/chr/waddle.txt";
-	else
-		filepath = "res/chr/nodoom.txt";
+	filepath = GetCharPath(c);
+
 	/*//////////////////////////////////////////////*/
 	{ /*file loader*/
 		
@@ -216,10 +216,25 @@ void LoadFighter(Fighter* f, Character_T c){
 	f->f_hitbox = f->f_hitboxl;
 	f->f_hurtbox = f->f_hurtboxl;
 
-	f->controls = 1;
 
-	f->y = st.platform_list->p_ypos;
+}
 
+char* GetCharPath(int c){
+	switch(c){
+	case DOOM:
+		return "res/chr/doom.txt";
+	case WADDLE:
+		return "res/chr/waddle.txt";
+	case C4:
+		return "";
+	case C5:
+	case C6:
+	case C7:
+	case C8:
+		return "";
+	default:		
+		return "res/chr/nodoom.txt";
+	}
 }
 /**************************************************************************************************/
 

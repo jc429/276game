@@ -11,9 +11,9 @@ SDL_Surface *textsurf;
 void InitMenu(){
 	DrawMenuBG();
 	Sprite* spr = LoadSprite("images/buttonvs.png",200,60,1);
-	SetButton(&testbutton,0,-1,"hello",spr,spr,spr,spr,400,400,200,60,1,0,100,111,0,0);
+	SetButton(&testbutton,0,GoToVersus,-1,"hello",spr,spr,spr,spr,400,400,200,60,1,0,100,111,0,0);
 	spr = LoadSprite("images/buttoncc.png",200,60,1);
-	SetButton(&chrbutton,0,-1,"hello",spr,spr,spr,spr,400,500,200,60,1,0,100,111,0,0);
+	SetButton(&chrbutton,0,GoToCharCr,-1,"hello",spr,spr,spr,spr,400,500,200,60,1,0,100,111,0,0);
 	
 }
 
@@ -22,9 +22,9 @@ void UpdateMenu(){
 	if(SDL_GetMouseState(&mx,&my))
     {
 		if(MouseInButton(mx,my,&testbutton))
-			GoToVersus();
+			testbutton.onClick();
 		else if(MouseInButton(mx,my,&chrbutton))
-			GoToCharCr();
+			chrbutton.onClick();
     }else{
 		DrawPixel(buffer,0,0,0,mx,my);
 
@@ -47,10 +47,11 @@ void DrawMenuBG(){
 	DrawBG(menuBG);
 }
 
-void SetButton(Button *button,int buttonID,int hotkey, char *text,Sprite *sprite,Sprite *sprite1,Sprite *sprite2,Sprite *sprite3,int x,int y,int w,int h,int shown,int frame,int c1, int c2, int font,int centered)
+void SetButton(Button *button,int buttonID,void (* onClick)(),int hotkey, char *text,Sprite *sprite,Sprite *sprite1,Sprite *sprite2,Sprite *sprite3,int x,int y,int w,int h,int shown,int frame,int c1, int c2, int font,int centered)
 {
   strcpy(button->text,text);
   button->button = sprite;
+  button->onClick = onClick;
   button->hotkey = hotkey;
   button->buttons[0] = sprite1;
   button->buttons[1] = sprite2;
@@ -66,6 +67,10 @@ void SetButton(Button *button,int buttonID,int hotkey, char *text,Sprite *sprite
   button->color = c1;
   button->hcolor = c2;
   button->centered = centered;
+}
+
+void DrawButton(Button* b){
+	DrawSprite(b->button,screen,b->box.x,b->box.y,0);
 }
 
 int MouseInButton(int mx, int my, Button *b){
