@@ -5,7 +5,7 @@
 #define NUMANIMS 5 /*animations per character*/
 /*** Where should this goooooo? ***/
 extern int framedata[NUMCHARS][NUMANIMS];
-
+extern Uint8 p1input, p2input;
 
 
 //extern int STAGEFLOOR,STAGELEFT,STAGERIGHT,P1SPAWN,P2SPAWN;
@@ -25,9 +25,10 @@ void InitFighters(Character_T p1, Character_T p2)
 	LoadFighter(&f2,p2);
 	f1.opponent = &f2;
 	f2.opponent = &f1;	
-	
+	f1.inputs = &p1input;
 	f1.controls = 1;
 	f1.y = st.platform_list->p_ypos;
+	f2.inputs = &p2input;
 	f2.controls = 1;
 	f2.y = st.platform_list->p_ypos;
 	f1.x = st.P1spawn;
@@ -106,7 +107,8 @@ void CheckFacing(Fighter* f){
 void UpdateFrame(Fighter* f){	
 	f->frame += 1;
 	if(f->frame >= (f->anim_length+f->anim_seed))
-		ChangeState(f,IDLE);
+		if(*f->inputs == 00000000)
+			ChangeState(f,IDLE);
 
 	if(f->frame >= (f->anim_length+f->anim_seed)){
 		f->frame = ((f->frame-f->anim_seed)%f->anim_length)+f->anim_seed;
@@ -221,19 +223,18 @@ void LoadFighter(Fighter* f, Character_T c){
 
 char* GetCharPath(int c){
 	switch(c){
-	case DOOM:
-		return "res/chr/doom.txt";
-	case WADDLE:
-		return "res/chr/waddle.txt";
-	case C4:
-		return "";
-	case C5:
-	case C6:
-	case C7:
-	case C8:
-		return "";
-	default:		
-		return "res/chr/nodoom.txt";
+		case DOOM:
+			return "res/chr/doom.txt";
+		case WADDLE:
+			return "res/chr/waddle.txt";
+		case C4:
+			return "res/chr/mega.txt";
+		case C5:
+		case C6:
+		case C7:
+		case C8:	
+		case DEBUG:
+			return "res/chr/debug.txt";
 	}
 }
 /**************************************************************************************************/
@@ -330,7 +331,6 @@ void FighterUpdate(Fighter *f){
 
 
 /**************************************************************************************************/
-
 
 
 

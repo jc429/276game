@@ -57,6 +57,12 @@ void Init_Graphics()
         fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
         exit(1);
     }
+	if (TTF_Init() != 0)
+	{
+      fprintf(stderr, "Unable to init TTF: %s\n", TTF_GetError());
+      SDL_Quit();
+      exit(1);
+    }
     atexit(SDL_Quit);
     if(SDL_VideoModeOK(XRES, YRES, 32, /*SDL_FULLSCREEN |*/ SDL_ANYFORMAT | SDL_HWSURFACE))
     {

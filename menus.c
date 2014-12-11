@@ -1,13 +1,12 @@
 #include "menus.h"
 #include "SDL.h"
 #include "SDL_image.h"
+#include <SDL_ttf.h>
 #include "graphics.h"
 #include "game.h"
 
 extern SDL_Surface *buffer,*screen;
 Button testbutton, chrbutton;
-TTF_Font *font;
-SDL_Surface *textsurf;
 void InitMenu(){
 	DrawMenuBG();
 	Sprite* spr = LoadSprite("images/buttonvs.png",200,60,1);
@@ -36,21 +35,33 @@ void UpdateMenu(){
 
 	}
 }
-
+extern SDL_Surface *textsurf;
+extern TTF_Font *font;
 void DrawMenus(){
 	DrawSprite(testbutton.button,screen,testbutton.box.x,testbutton.box.y,0);
 	DrawSprite(chrbutton.button,screen,chrbutton.box.x,chrbutton.box.y,0);
-
-
-	font = TTF_OpenFont("fonts/font.ttf",16);
-	SDL_Color text_color = {255, 255, 255};
-	textsurf = TTF_RenderText_Solid(font,"Hello buddy",text_color);
-	SDL_BlitSurface(textsurf,NULL,buffer,NULL);
+	
+	
+	SDL_Color bg_color = {0,0,0};
+	
+	DrawText("yeah buddy",400,43);
+	
+	textsurf = TTF_RenderText_Solid(font,"Bye buddy",bg_color);
+	
 }
 
 void DrawMenuBG(){
 	char* menuBG = "images/menubg.png";
 	DrawBG(menuBG);
+}
+
+void DrawText(char* message,int x, int y){
+	SDL_Color text_color = {255, 255, 255};
+	textsurf = TTF_RenderText_Solid(font,message,text_color);
+	SDL_Rect dest;
+	dest.x = x;
+	dest.y = y;
+	SDL_BlitSurface(textsurf,NULL, screen, &dest);	
 }
 
 void SetButton(Button *button,int buttonID,void (*onClick)(int a,...),int hotkey, char *text,Sprite *sprite,Sprite *sprite1,Sprite *sprite2,Sprite *sprite3,int x,int y,int w,int h,int shown,int frame,int c1, int c2, int font,int centered)
@@ -77,6 +88,7 @@ void SetButton(Button *button,int buttonID,void (*onClick)(int a,...),int hotkey
 
 void DrawButton(Button* b){
 	DrawSprite(b->button,screen,b->box.x,b->box.y,0);
+	DrawText(b->text,b->box.x+5,b->box.y+5);
 }
 
 int MouseInButton(int mx, int my, Button *b){

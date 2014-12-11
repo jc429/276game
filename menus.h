@@ -40,8 +40,9 @@ void SetButton(Button *button,int buttonID, void (*onClick)(int a,...),int hotke
 
 void InitMenu();
 void UpdateMenu();
-void DrawMenuBG();
 void DrawMenus();
+void DrawMenuBG();
+void DrawText(char* message,int x, int y);
 void DrawButton(Button* b);
 int MouseInButton(int mx, int my, Button *b); 
 void VersusClick(int a,...);

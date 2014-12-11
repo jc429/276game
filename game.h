@@ -41,6 +41,7 @@ void InitCharCr();
 void DrawCharCr();
 void UpdateCharCr();
 
+void InitFont();
 
 
 #endif

@@ -26,6 +26,9 @@ Sprite* p1vic;				/*p1 victory screen*/
 Sprite* p2vic;				/*p2 victory screen*/
 Sprite* drawvic;			/*draw screen*/
 
+TTF_Font *font;
+SDL_Surface *textsurf;
+
 Uint8* keys;				/*keys pressed*/
 int i,j,k,l;				/*iterators*/
 int debuginputs;			/*Show key presses?*/
@@ -79,6 +82,7 @@ void Init_All()
 	done = 0;
 	nexttimer = -1;
 	Init_Graphics();
+	InitFont();
 	InitMenu();
 	InitMouse();
 	atexit(CleanUpAll);
@@ -307,3 +311,7 @@ void GoToStageSel(){
 
 void DrawCharSel();
 void DrawStageSel();
+
+void InitFont(){
+	font = TTF_OpenFont("fonts/font2.ttf",26);
+}

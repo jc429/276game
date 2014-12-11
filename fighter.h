@@ -21,8 +21,9 @@ typedef enum{
 
 /** Fighter struct*/
 typedef struct Fighter{
-	struct Fighter* opponent;	/**< pointer to the other guy*/
+	struct Fighter *opponent;	/**< pointer to the other guy*/
 	Character_T chr;			/**< what character are we?*/
+	Uint8 *inputs;				/**< pointer to the inputs of the player using this fighter*/
 	int controls;				/**< used to lock the controls (0 = locked)*/
 	Uint8 victories;			/**< for tracking rounds won*/
 /* Animation*/
