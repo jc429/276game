@@ -46,7 +46,6 @@ void DrawMenus(){
 	
 	DrawText("yeah buddy",400,43);
 	
-	textsurf = TTF_RenderText_Solid(font,"Bye buddy",bg_color);
 	
 }
 

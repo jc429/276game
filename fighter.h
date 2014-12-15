@@ -13,6 +13,7 @@ typedef enum{
 	C3 = 2,
 	WADDLE = 2,
 	C4 = 3,
+	MEGA = 3,
 	C5 = 4,
 	C6 = 5,
 	C7 = 6,
@@ -23,6 +24,7 @@ typedef enum{
 typedef struct Fighter{
 	struct Fighter *opponent;	/**< pointer to the other guy*/
 	Character_T chr;			/**< what character are we?*/
+	char* name;					/**< character name. I want to get rid of this, or at least not store it in the fighter struct*/
 	Uint8 *inputs;				/**< pointer to the inputs of the player using this fighter*/
 	int controls;				/**< used to lock the controls (0 = locked)*/
 	Uint8 victories;			/**< for tracking rounds won*/
@@ -195,6 +197,8 @@ void DrawChar(Fighter* f,SDL_Surface* screen);
 void UpdateFrame(Fighter* f);
 void LoadFighter(Fighter*,Character_T);
 char* GetCharPath(int c);
+int LoadCFG(Fighter* f,char* path);
+int SaveCFG(Fighter* f,char* path);
 /*************************************************************/
 void InputControl();
 void FighterInputs(Fighter* f,Uint8 inputs);

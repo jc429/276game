@@ -23,7 +23,7 @@ int framedata[NUMCHARS][NUMANIMS] = {
 	/*C1 - DEBUG*/{16,32, 33, 34, 35} ,   /*  frames for character 1 */
 	/*C2 - DOOM*/{0, 20, 24, 28, 29} ,   /*  ex: column 1 is idle, then idle2, then attacking, then hit, etc */
 	/*C3 - WADDLE*/{0, 4, 11, 15, 16},
-	/*C4*/{0, 1, 2, 3, 4},
+	/*C4 - MEGAMAN*/{0, 2, 3, 4, 5},
 	/*C5*/{0, 1, 2, 3, 4},
 	/*C6*/{0, 1, 2, 3, 4},
 	/*C7*/{0, 1, 2, 3, 4},

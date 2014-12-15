@@ -73,8 +73,8 @@ void DrawFighters(SDL_Surface* surf)
 
 void DrawChar(Fighter* f, SDL_Surface* screen){
 	int drawsprite = 1;
-	int drawhitbox = 0;
-	int drawhurtbox = 0;
+	int drawhitbox = 1;
+	int drawhurtbox = 1;
 
 	if(f->state!=ATTACKING)
 		CheckFacing(f);
@@ -121,19 +121,59 @@ void UpdateFrame(Fighter* f){
 void LoadFighter(Fighter* f, Character_T c){
 	char* filepath;
 	f->chr = c;
-	/*//////////////////////////////////////////////*/
 	filepath = GetCharPath(c);
 
-	/*//////////////////////////////////////////////*/
-	{ /*file loader*/
+	if(LoadCFG(f,filepath)){ /*file loader*/
+	
+
+		/*DEBUG STUFF CHANGE LATER*/
+		f->walkspeed=5;
+		/**************************/
+	
+		f->anim_seed = framedata[f->chr][IDLE]; /*seed is where the animation begins on the sheet*/
+		f->anim_length = framedata[f->chr][IDLE+1]-framedata[f->chr][IDLE]; /*anim length is just the distance to the next seed*/	
+		f->frame = f->anim_seed;
+		f->state=IDLE;
+		f->hasjump = f->maxjumps;
+		f->grounded = 1;
+		f->health = f->healthmax;
+		f->hitstun = 0;
+		
+		f->f_sprite = f->f_spritel;
+		f->f_hitbox = f->f_hitboxl;
+		f->f_hurtbox = f->f_hurtboxl;
+	}else{
+		fprintf(stderr,"load failed");
+	}
+
+}
+
+char* GetCharPath(int c){
+	switch(c){
+		case DOOM:
+			return "res/chr/doom.txt";
+		case WADDLE:
+			return "res/chr/waddle.txt";
+		case C4:
+			return "res/chr/mega.txt";
+		case C5:
+		case C6:
+		case C7:
+		case C8:	
+		case DEBUG:
+			return "res/chr/debug.txt";
+	}
+}
+
+int LoadCFG(Fighter* f,char* path){
 		
 		char buf[255];
 		int cur_line = 0;
 		FILE *fileptr = NULL;
-		fileptr = fopen(filepath,"r");
+		fileptr = fopen(path,"r");
 		if(!fileptr){
-			fprintf(stderr,"couldn't find character file: ",filepath);
-			return;
+			fprintf(stderr,"couldn't find character file: ",path);
+			return 0;
 		}
 
 		
@@ -197,45 +237,37 @@ void LoadFighter(Fighter* f, Character_T c){
 			}
 		}
 		fclose(fileptr);
-
-
-		/*DEBUG STUFF CHANGE LATER*/
-		f->walkspeed=5;
-		/**************************/
-	
-		f->anim_seed = framedata[f->chr][IDLE]; /*seed is where the animation begins on the sheet*/
-		f->anim_length = framedata[f->chr][IDLE+1]-framedata[f->chr][IDLE]; /*anim length is just the distance to the next seed*/	
-		f->frame = f->anim_seed;
-		f->state=IDLE;
-		f->hasjump = f->maxjumps;
-		f->grounded = 1;
-		f->health = f->healthmax;
-		f->hitstun = 0;
-
-	}
-
-	f->f_sprite = f->f_spritel;
-	f->f_hitbox = f->f_hitboxl;
-	f->f_hurtbox = f->f_hurtboxl;
-
-
+		return 1;
 }
 
-char* GetCharPath(int c){
-	switch(c){
-		case DOOM:
-			return "res/chr/doom.txt";
-		case WADDLE:
-			return "res/chr/waddle.txt";
-		case C4:
-			return "res/chr/mega.txt";
-		case C5:
-		case C6:
-		case C7:
-		case C8:	
-		case DEBUG:
-			return "res/chr/debug.txt";
-	}
+int SaveCFG(Fighter* f,char* path){
+	char buf[255];
+		int cur_line = 0;
+		FILE *fileptr = NULL;
+		fileptr = fopen(path,"w");
+		if(!fileptr){
+			fprintf(stderr,"couldn't find character file: ",path);
+			return 0;
+		}
+		fprintf(fileptr,"tile_width: %d\n",f->t_width);
+		fprintf(fileptr,"tile_height: %d\n",f->t_height);
+		fprintf(fileptr,"tiles_per_row: %d\n",f->t_per_row);
+		fprintf(fileptr,"x_offset: %d\n",f->x_off);
+		fprintf(fileptr,"y_offset: %d\n",f->y_off);
+		
+		fprintf(fileptr,"sprite_l: res/chr/%s/sprite_l.png \n",f->name);
+		fprintf(fileptr,"sprite_r: res/chr/%s/sprite_r.png \n",f->name);
+		fprintf(fileptr,"hitbox_l: res/chr/%s/hitbox_l.png \n",f->name);
+		fprintf(fileptr,"hitbox_r: res/chr/%s/hitbox_r.png \n",f->name);
+		fprintf(fileptr,"hurtbox_l: res/chr/%s/hurtbox_l.png \n",f->name);
+		fprintf(fileptr,"hurtbox_r: res/chr/%s/hurtbox_r.png \n",f->name);
+		
+		fprintf(fileptr,"healthmax: %d\n",f->healthmax);
+		fprintf(fileptr,"maxjumps: %d\n",f->maxjumps);
+	
+
+		fclose(fileptr);
+		return 1;
 }
 /**************************************************************************************************/
 

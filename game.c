@@ -34,6 +34,8 @@ int i,j,k,l;				/*iterators*/
 int debuginputs;			/*Show key presses?*/
 int bsize;					/*size of the icons for each key*/
 int pausetimer;				/*prevents pause from being spammed every frame*/
+int pausequeue;				/*queues a pause for the next frame*/
+int fpress;
 
 int done;					/*is the game done running?*/
 
@@ -46,14 +48,21 @@ int main(int argc, char *argv[])
 
 	/*defaults for placeholder reasons*/
 	c1 = DOOM;
-	c2 = WADDLE;
+	c2 = MEGA;
 	stage = ST_PLATFORM;
 	/**/
 	pause = 0;
+	pausequeue = 0;
+	fpress = 0;
 
 	Init_All();
+/*	SaveCFG(&f2,"res/test.txt");*/
 	do
 	{   
+		if(pausequeue==1){
+			pausequeue=0;
+			GamePause();
+		}
 		pausetimer--;
 		InputControl();
 		if(GameState==VERSUS){
@@ -137,8 +146,6 @@ void GamePause(){
 	if(GameState==VERSUS){
 		pausetimer = 10;
 		if(pause==0){
-//			DrawBG("images/pause.png");
-//			DrawSprite(pausescr,screen,0,0,1);
 			pause = 1;
 		}else
 			pause = 0;
@@ -182,6 +189,15 @@ void InputControl(){
 	if(keys[SDLK_SPACE]){
 		if(pausetimer<=0)
 			GamePause();
+	}
+	if(keys[SDLK_LALT]&&!fpress){ /*if paused advance one frame*/
+		if(!pausequeue&&pause){
+			pausequeue=1;
+			GamePause();
+		}
+		fpress = 1;
+	}else if(!keys[SDLK_LALT]){
+		fpress = 0;
 	}
 	if(keys[SDLK_ESCAPE])
 		Quit();
@@ -253,16 +269,17 @@ void UpdateVersus(){
 	if(!pause){	
 		UpdateStage(stage);
 		if((f2.state!=DEAD)&&(f1.state!=DEAD)){
+			if(f1.state!=HIT&&f1.state!=DEAD)
+				UpdateFrame(&f1);
+			if(f2.state!=HIT&&f2.state!=DEAD)
+				UpdateFrame(&f2);
 			FighterInputs(&f1,p1input);
 			FighterInputs(&f2,p2input);
 			FighterThink(&f2);
 			FighterThink(&f1);
 			FighterUpdate(&f1);
 			FighterUpdate(&f2);
-			if(f1.state!=HIT&&f1.state!=DEAD)
-				UpdateFrame(&f1);
-			if(f2.state!=HIT&&f2.state!=DEAD)
-				UpdateFrame(&f2);
+			
 		}
 		if(nexttimer>0){
 			if(f2.state==DEAD && f1.state==DEAD)
