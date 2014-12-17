@@ -15,10 +15,13 @@ typedef enum{
 	C4 = 3,
 	MEGA = 3,
 	C5 = 4,
+	WIZ = 4,
 	C6 = 5,
 	C7 = 6,
 	C8 = 7
 } Character_T;
+
+
 
 /** Fighter struct*/
 typedef struct Fighter{

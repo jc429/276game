@@ -22,7 +22,14 @@ typedef struct		/*ripped from project dark*/
   int drawtype;         /*0 sprite 1 drawn 2 drawn translucent.  If drawn the box is used for dimensions*/
 }Button;
 
-
+typedef struct Mouse{	/**< Mouse struct, tells us the state of the mouse on every frame*/
+	int x;
+	int y;
+	int prev;
+	Uint8 clicked;		/* presently down, last frame up */
+	Uint8 held;			/* presently down, last frame down */
+	Uint8 released;		/* presently up, last frame down */
+} Mouse;
 
 typedef union MenuObj
 {
@@ -37,6 +44,7 @@ typedef struct MenuItem
 
 void SetButton(Button *button,int buttonID, void (*onClick)(int a,...),int hotkey, char *text,Sprite *sprite,Sprite *sprite1,Sprite *sprite2,Sprite *sprite3,int x,int y,int w,int h,int shown,int frame,int c1, int c2, int font,int centered);
 
+void UpdateMouse();
 
 void InitMenu();
 void UpdateMenu();
@@ -44,7 +52,14 @@ void DrawMenus();
 void DrawMenuBG();
 void DrawText(char* message,int x, int y);
 void DrawButton(Button* b);
-int MouseInButton(int mx, int my, Button *b); 
+int MouseInButton(Button *b); 
 void VersusClick(int a,...);
 void ChrCrClick(int a,...);
+
+void SaveCharacter(int a,...);
+
+void IncrementStat(int a,...);
+void DecrementStat(int a,...);
+
+
 #endif

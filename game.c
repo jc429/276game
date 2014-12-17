@@ -11,7 +11,6 @@ extern Fighter f1,f2;		/*fighter 1 and fighter 2*/
 #define NEXTTIME 60
 #define NUMROUNDS 3
 
-
 GameState_T GameState;
 
 Stage_T stage;			/*the selected stage*/
@@ -21,6 +20,7 @@ int nexttimer;				/*timer until the next round*/
 Uint8 pause;					/*pause flag*/
 Uint8 p1input = 00000000;	/*lrudabxy - order of buttons mapped to bits*/
 Uint8 p2input = 00000000;
+Uint8 p1prev,p2prev;
 Sprite* pausescr;			/*the pause screen*/
 Sprite* p1vic;				/*p1 victory screen*/
 Sprite* p2vic;				/*p2 victory screen*/
@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 /*	SaveCFG(&f2,"res/test.txt");*/
 	do
 	{   
+		UpdateMouse();
 		if(pausequeue==1){
 			pausequeue=0;
 			GamePause();
@@ -71,6 +72,9 @@ int main(int argc, char *argv[])
 		}else if(GameState==MAIN_MENU){
 			DrawMainMenu();
 			UpdateMenu();
+		}else if(GameState==C_SELECT){
+			DrawCharSel();
+			UpdateCharSel();
 		}else if(GameState==C_CREATOR){
 			DrawCharCr();
 			UpdateCharCr();
@@ -88,6 +92,7 @@ int main(int argc, char *argv[])
 
 void Init_All()
 {
+	
 	done = 0;
 	nexttimer = -1;
 	Init_Graphics();
@@ -141,6 +146,16 @@ void DrawVersus(){
 	DrawFighters(screen);
 	DrawMeters(&f1,&f2);	
 	DrawNextRoundTimer(nexttimer);
+	if(f2.combo>0){
+		char a[20]; 
+		sprintf(a,"Combo: %d!",f2.combo);
+		DrawText(a,40,120);
+	}
+	if(f1.combo>0){
+		char a[20]; 
+		sprintf(a,"Combo: %d!",f1.combo);
+		DrawText(a,840,120);
+	}
 }
 void GamePause(){
 	if(GameState==VERSUS){
@@ -181,7 +196,8 @@ void NextGame(){
 }
 	
 void InputControl(){
-	
+	p1prev = p1input;
+	p2prev = p2input;
 	SDL_PumpEvents();
 	p1input = 0;
 	p2input = 0;
@@ -299,7 +315,7 @@ void UpdateVersus(){
 			ClearFighter(&f2);
 			InitVersus();
 		}
-
+		
 	}
 	else
 		DrawPause(pausescr);
@@ -319,9 +335,7 @@ void GoToMenu(){
 	InitMenu();
 }
 
-void GoToCharSel(){
-	GameState = C_SELECT;
-}
+
 void GoToStageSel(){
 	GameState = S_SELECT;
 }

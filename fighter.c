@@ -13,7 +13,7 @@ extern SDL_Surface *screen; /*pointer to the screen*/
 Fighter f1, f2;
 extern Stage st;
 
-
+char *names[8] = {"debug","doom","waddle","mega","wiz"};
 
 
 /**************************************************************************************************/
@@ -73,8 +73,8 @@ void DrawFighters(SDL_Surface* surf)
 
 void DrawChar(Fighter* f, SDL_Surface* screen){
 	int drawsprite = 1;
-	int drawhitbox = 1;
-	int drawhurtbox = 1;
+	int drawhitbox = 0;
+	int drawhurtbox = 0;
 
 	if(f->state!=ATTACKING)
 		CheckFacing(f);
@@ -122,6 +122,7 @@ void LoadFighter(Fighter* f, Character_T c){
 	char* filepath;
 	f->chr = c;
 	filepath = GetCharPath(c);
+	f->name = names[c];
 
 	if(LoadCFG(f,filepath)){ /*file loader*/
 	
@@ -157,6 +158,7 @@ char* GetCharPath(int c){
 		case C4:
 			return "res/chr/mega.txt";
 		case C5:
+			return "res/chr/wiz.txt";
 		case C6:
 		case C7:
 		case C8:	

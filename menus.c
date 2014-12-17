@@ -6,7 +6,29 @@
 #include "game.h"
 
 extern SDL_Surface *buffer,*screen;
+Button b1,b2,b3,b4,b5,b6,b7,b8; /* TODO: replace with a dynamic list of buttons*/
 Button testbutton, chrbutton;
+Mouse mouse;
+void UpdateMouse(){
+	mouse.clicked=0;
+	mouse.held=0;
+	mouse.released=0;
+	if(SDL_GetMouseState(&mouse.x,&mouse.y)){
+		if(mouse.prev==0){
+			mouse.clicked=1;
+		}else if(mouse.prev==1){
+			mouse.held=1;
+		}
+		mouse.prev = 1;
+	}else{
+		if(mouse.prev==1){
+			mouse.released=1;
+		}
+		mouse.prev = 0;
+	}
+
+}
+
 void InitMenu(){
 	DrawMenuBG();
 	Sprite* spr = LoadSprite("images/buttonvs.png",200,60,1);
@@ -16,22 +38,22 @@ void InitMenu(){
 	
 }
 void VersusClick(int a,...){
-	GoToVersus();
+	GoToCharSel();
+	//GoToVersus();
 }
 void ChrCrClick(int a,...){
 	GoToCharCr();
 }
 
 void UpdateMenu(){
-	int mx,my;
-	if(SDL_GetMouseState(&mx,&my))
+	if(mouse.clicked)
     {
-		if(MouseInButton(mx,my,&testbutton))
+		if(MouseInButton(&testbutton))
 			testbutton.onClick(0);
-		else if(MouseInButton(mx,my,&chrbutton))
+		else if(MouseInButton(&chrbutton))
 			chrbutton.onClick(0);
     }else{
-		DrawPixel(buffer,0,0,0,mx,my);
+		DrawPixel(buffer,0,0,0,mouse.x,mouse.y);
 
 	}
 }
@@ -90,8 +112,8 @@ void DrawButton(Button* b){
 	DrawText(b->text,b->box.x+5,b->box.y+5);
 }
 
-int MouseInButton(int mx, int my, Button *b){
-	if((mx > b->box.x)&&(mx < (b->box.x+b->box.w))&&(my > b->box.y)&&(my < (b->box.y+b->box.h)))
+int MouseInButton(Button *b){
+	if((mouse.x > b->box.x)&&(mouse.x < (b->box.x+b->box.w))&&(mouse.y > b->box.y)&&(mouse.y < (b->box.y+b->box.h)))
 		return 1;
 	return 0;
 }

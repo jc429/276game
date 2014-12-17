@@ -820,19 +820,22 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 	int rndspace;	/*space between round icons*/
 	int numrounds;	/*number of round icons*/
 	int r,i,j;		/*iterators for things*/
+	float HPrt1,HPrt2;	/*hp scale*/
 
 	HPloc_y = 60;
 	HPoff_x = 100;/*x offset from middle of screeen*/
 	HPlen = 400;
 	HPht = 15;
+	HPrt1 = 400/(float)f1->healthmax;
+	HPrt2 = 400/(float)f2->healthmax;
 	for(i=0;i<HPlen;i++){
 		for(j=0;j<HPht;j++){
-			/*needs to be replaced with a percentage calculation rather than fixed number*/
-			if(i < f1->health)
+			
+			if(i < f1->health*HPrt1)
 				DrawPixel(screen,200,200,0,(512-HPoff_x-i+j),HPloc_y+j);
 			else
 				DrawPixel(screen,255,80,80,(512-HPoff_x-i+j),HPloc_y+j);
-			if(i < f2->health)
+			if(i < f2->health*HPrt2)
 				DrawPixel(screen,200,200,0,(512+HPoff_x+i-j),HPloc_y+j);
 			else
 				DrawPixel(screen,255,80,80,(512+HPoff_x+i-j),HPloc_y+j);
@@ -841,20 +844,20 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 	rndoff_x = 100;
 	rndoff_y = 80;
 	rndsize = 8;
-	rndspace = 5;
+	rndspace = 8;
 	numrounds = 3;
 	for(r = 0; r < numrounds; r++){
 		for(i = 0; i < rndsize; i++){
 			for(j = 0; j < rndsize; j++){
 				if(r < f1->victories)
-					DrawPixel(screen,90,180,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+					DrawPixel(screen,90,180,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i))+j,(rndoff_y+j));
 				else
-					DrawPixel(screen,0,0,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+					DrawPixel(screen,0,0,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i))+j,(rndoff_y+j));
 
 				if(r < f2->victories)
-					DrawPixel(screen,90,180,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+					DrawPixel(screen,90,180,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i))-j,(rndoff_y+j));
 				else
-					DrawPixel(screen,0,0,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i)),(rndoff_y+j));
+					DrawPixel(screen,0,0,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i))-j,(rndoff_y+j));
 			}
 		}
 	}

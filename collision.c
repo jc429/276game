@@ -4,6 +4,7 @@
 #include "graphics.h"
 #include "stage.h"
 extern SDL_Surface *screen;
+/** damage = red, stun = blue, kba = green*/
 
 void CollisionCheck(Fighter* f){
 	int debug_collision = 0;
