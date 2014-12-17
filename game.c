@@ -114,9 +114,13 @@ void InitVersus(){
 
 
 void Quit(){
-	if(pause)
-		GamePause();
-	endgame = 1;
+	if(GameState==VERSUS){
+		GoToMenu();
+	}else{
+		if(pause)
+			GamePause();
+		endgame = 1;
+	}
 }
 
 void CleanUpAll()
@@ -193,6 +197,7 @@ void NextGame(){
 	f2.victories = 0;
 	if(nexttimer<0)
 		nexttimer=NEXTTIME;
+	GoToCharSel();
 }
 	
 void InputControl(){

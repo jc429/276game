@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "graphics.h"
 #include "fighter.h"
+#include "menus.h"
 
 #define MaxSprites	255
 #define XRES		1024
@@ -821,6 +822,7 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 	int numrounds;	/*number of round icons*/
 	int r,i,j;		/*iterators for things*/
 	float HPrt1,HPrt2;	/*hp scale*/
+	extern char *names[8];
 
 	HPloc_y = 60;
 	HPoff_x = 100;/*x offset from middle of screeen*/
@@ -841,6 +843,8 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 				DrawPixel(screen,255,80,80,(512+HPoff_x+i-j),HPloc_y+j);
 		}
 	}
+	DrawText(names[f1->chr],10,30);
+	DrawText(names[f2->chr],880,30);
 	rndoff_x = 100;
 	rndoff_y = 80;
 	rndsize = 8;
@@ -853,7 +857,6 @@ void DrawMeters(Fighter* f1,Fighter* f2){
 					DrawPixel(screen,90,180,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i))+j,(rndoff_y+j));
 				else
 					DrawPixel(screen,0,0,0,(512-(rndoff_x+(r*(rndsize+rndspace))+i))+j,(rndoff_y+j));
-
 				if(r < f2->victories)
 					DrawPixel(screen,90,180,0,(512+(rndoff_x+(r*(rndsize+rndspace))+i))-j,(rndoff_y+j));
 				else

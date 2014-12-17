@@ -17,7 +17,8 @@ extern SDL_Surface *screen; /*pointer to the screen*/
 Fighter f1, f2;
 extern Stage st;
 
-char *names[8] = {"debug","doom","waddle","mega","wiz","","",""};
+char *ids[8] = {"debug","doom","waddle","mega","wiz","","",""};
+char *names[8] = {"Debug Man","Dr. Doom","Waddle Dee","Mega Man","Wizard","","",""};
 
 
 /**************************************************************************************************/
@@ -123,14 +124,11 @@ void LoadFighter(Fighter* f, Character_T c){
 	char* filepath;
 	f->chr = c;
 	filepath = GetCharPath(c);
-	f->name = names[c];
 		/*DEBUG STUFF CHANGE LATER*/
 		f->walkspeed=5;
 		/**************************/
 
 	if(LoadCFG(f,filepath)){ /*file loader*/
-	
-
 	
 	
 		f->anim_seed = framedata[f->chr][IDLE]; /*seed is where the animation begins on the sheet*/
@@ -263,12 +261,12 @@ int SaveCFG(Fighter* f,char* path){
 		fprintf(fileptr,"x_offset: %d\n",f->x_off);
 		fprintf(fileptr,"y_offset: %d\n",f->y_off);
 		
-		fprintf(fileptr,"sprite_l: res/chr/%s/sprite_l.png \n",f->name);
-		fprintf(fileptr,"sprite_r: res/chr/%s/sprite_r.png \n",f->name);
-		fprintf(fileptr,"hitbox_l: res/chr/%s/hitbox_l.png \n",f->name);
-		fprintf(fileptr,"hitbox_r: res/chr/%s/hitbox_r.png \n",f->name);
-		fprintf(fileptr,"hurtbox_l: res/chr/%s/hurtbox_l.png \n",f->name);
-		fprintf(fileptr,"hurtbox_r: res/chr/%s/hurtbox_r.png \n",f->name);
+		fprintf(fileptr,"sprite_l: res/chr/%s/sprite_l.png \n",ids[f->chr]);
+		fprintf(fileptr,"sprite_r: res/chr/%s/sprite_r.png \n",ids[f->chr]);
+		fprintf(fileptr,"hitbox_l: res/chr/%s/hitbox_l.png \n",ids[f->chr]);
+		fprintf(fileptr,"hitbox_r: res/chr/%s/hitbox_r.png \n",ids[f->chr]);
+		fprintf(fileptr,"hurtbox_l: res/chr/%s/hurtbox_l.png \n",ids[f->chr]);
+		fprintf(fileptr,"hurtbox_r: res/chr/%s/hurtbox_r.png \n",ids[f->chr]);
 		
 		fprintf(fileptr,"healthmax: %d\n",f->healthmax);
 		fprintf(fileptr,"maxjumps: %d\n",f->maxjumps);
@@ -370,11 +368,7 @@ void FighterUpdate(Fighter *f){
 	}
 }
 
-
 /**************************************************************************************************/
-
-
-
 
 /** for changing the fighter's state*/
 void ChangeState(Fighter* f, State_T st){
@@ -424,5 +418,3 @@ void TakeHit(Fighter* f, int dmg, int kback, int stun){
 	f->hitstun = stun;
 	f->combo++;
 }
-
-
