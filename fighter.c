@@ -4,16 +4,20 @@
 #define NUMCHARS 3 /*number of characters in the game*/
 #define NUMANIMS 5 /*animations per character*/
 /*** Where should this goooooo? ***/
+#define SHOWSPRITES 1
+#define SHOWPOINTS 0
+#define drawsprite 1
+#define drawhitbox 0
+#define drawhurtbox 0
+
 extern int framedata[NUMCHARS][NUMANIMS];
 extern Uint8 p1input, p2input;
 
-
-//extern int STAGEFLOOR,STAGELEFT,STAGERIGHT,P1SPAWN,P2SPAWN;
 extern SDL_Surface *screen; /*pointer to the screen*/
 Fighter f1, f2;
 extern Stage st;
 
-char *names[8] = {"debug","doom","waddle","mega","wiz"};
+char *names[8] = {"debug","doom","waddle","mega","wiz","","",""};
 
 
 /**************************************************************************************************/
@@ -51,8 +55,8 @@ void ClearFighter(Fighter *f){
 /** Draws the fighters to the screen*/
 void DrawFighters(SDL_Surface* surf)
 {
-	int showsprites = 1;	/**< Draw the sprites? */
-	int showpoints = 1;		/**< Show their points?*/
+	int showsprites = SHOWSPRITES;	/**< Draw the sprites? */
+	int showpoints = SHOWPOINTS;		/**< Show their points?*/
 	/******************************/
 	if(showsprites){
 		if((f1.f_spriter != NULL)&&((f1.f_spriter != NULL))) {
@@ -69,12 +73,9 @@ void DrawFighters(SDL_Surface* surf)
 	}	
 
 	
-}
+} 
 
 void DrawChar(Fighter* f, SDL_Surface* screen){
-	int drawsprite = 1;
-	int drawhitbox = 0;
-	int drawhurtbox = 0;
 
 	if(f->state!=ATTACKING)
 		CheckFacing(f);
@@ -123,13 +124,14 @@ void LoadFighter(Fighter* f, Character_T c){
 	f->chr = c;
 	filepath = GetCharPath(c);
 	f->name = names[c];
+		/*DEBUG STUFF CHANGE LATER*/
+		f->walkspeed=5;
+		/**************************/
 
 	if(LoadCFG(f,filepath)){ /*file loader*/
 	
 
-		/*DEBUG STUFF CHANGE LATER*/
-		f->walkspeed=5;
-		/**************************/
+	
 	
 		f->anim_seed = framedata[f->chr][IDLE]; /*seed is where the animation begins on the sheet*/
 		f->anim_length = framedata[f->chr][IDLE+1]-framedata[f->chr][IDLE]; /*anim length is just the distance to the next seed*/	
@@ -200,35 +202,34 @@ int LoadCFG(Fighter* f,char* path){
 				fscanf(fileptr,"%s",buf);
 				f->f_spritel = LoadSprite(buf,f->t_width, f->t_height, f->t_per_row);
 				if(f->f_spritel == NULL)fprintf(stdout,"FATAL ERROR: Couldn't load sprite\n");
-				fscanf(fileptr,"%s",buf);
-			}if(strcmp(buf,"sprite_r:")==0){
+				fscanf(fileptr,"%s",buf);}
+			if(strcmp(buf,"sprite_r:")==0){
 				fscanf(fileptr,"%s",buf);
 				f->f_spriter = LoadSprite(buf,f->t_width, f->t_height, f->t_per_row);
 				if(f->f_spriter == NULL)fprintf(stdout,"FATAL ERROR: Couldn't load sprite\n");
-				fscanf(fileptr,"%s",buf);
-			}
+				fscanf(fileptr,"%s",buf);}
 			if(strcmp(buf,"hitbox_l:")==0){
 				fscanf(fileptr,"%s",buf);
 				f->f_hitboxl = LoadSprite(buf,f->t_width, f->t_height, f->t_per_row);
 				if(f->f_hitboxl == NULL)fprintf(stdout,"FATAL ERROR: Couldn't load hitboxes\n");
-				fscanf(fileptr,"%s",buf);
-			}if(strcmp(buf,"hitbox_r:")==0){
+				fscanf(fileptr,"%s",buf);}
+			if(strcmp(buf,"hitbox_r:")==0){
 				fscanf(fileptr,"%s",buf);
 				f->f_hitboxr = LoadSprite(buf,f->t_width, f->t_height, f->t_per_row);
 				if(f->f_hitboxr == NULL)fprintf(stdout,"FATAL ERROR: Couldn't load hitboxes\n");
-				fscanf(fileptr,"%s",buf);
-			}
+				fscanf(fileptr,"%s",buf);}
 			if(strcmp(buf,"hurtbox_l:")==0){
 				fscanf(fileptr,"%s",buf);
 				f->f_hurtboxl = LoadSprite(buf,f->t_width, f->t_height, f->t_per_row);
 				if(f->f_hurtboxl == NULL)fprintf(stdout,"FATAL ERROR: Couldn't load hurtboxes\n");
-				fscanf(fileptr,"%s",buf);
-			}if(strcmp(buf,"hurtbox_r:")==0){
+				fscanf(fileptr,"%s",buf);}
+			if(strcmp(buf,"hurtbox_r:")==0){
 				fscanf(fileptr,"%s",buf);
 				f->f_hurtboxr = LoadSprite(buf,f->t_width, f->t_height, f->t_per_row);
 				if(f->f_hurtboxr == NULL)fprintf(stdout,"FATAL ERROR: Couldn't load hurtboxes\n");
 				fscanf(fileptr,"%s",buf);
 			}
+
 			if(strcmp(buf,"healthmax:")==0){
 				fscanf(fileptr,"%i",&f->healthmax);
 				fscanf(fileptr,"%s",buf);
@@ -237,6 +238,11 @@ int LoadCFG(Fighter* f,char* path){
 				fscanf(fileptr,"%i",&f->maxjumps);
 				fscanf(fileptr,"%s",buf);
 			}
+			if(strcmp(buf,"walkspeed:")==0){
+				fscanf(fileptr,"%i",&f->walkspeed);
+				fscanf(fileptr,"%s",buf);
+			}
+
 		}
 		fclose(fileptr);
 		return 1;
@@ -266,6 +272,7 @@ int SaveCFG(Fighter* f,char* path){
 		
 		fprintf(fileptr,"healthmax: %d\n",f->healthmax);
 		fprintf(fileptr,"maxjumps: %d\n",f->maxjumps);
+		fprintf(fileptr,"walkspeed: %d\n",f->walkspeed);
 	
 
 		fclose(fileptr);
@@ -393,7 +400,7 @@ void Jump(Fighter* f){
 		f->vy = -20;
 		f->grounded = 0;
 		f->hasjump--;
-		f->jumptimer = 8;
+		f->jumptimer = 6;
 	}
 }
 

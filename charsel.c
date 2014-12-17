@@ -6,6 +6,7 @@ void SelectCharacter(int a,...);
 extern GameState_T GameState;
 extern SDL_Surface *screen, *buffer;
 extern Button b1,b2,b3,b4,b5,b6,b7,b8;
+extern Button bb;
 extern Character_T c1,c2;			/*the selected characters*/
 extern Mouse mouse;
 
@@ -28,9 +29,10 @@ void InitCharSel(){
 	SetButton(&b3,2,SelectCharacter,-1,"Waddle Dee",spr,spr,spr,spr,250,400,200,60,1,0,100,111,0,0);
 	SetButton(&b4,3,SelectCharacter,-1,"Mega Man",spr,spr,spr,spr,250,500,200,60,1,0,100,111,0,0);
 	SetButton(&b5,4,SelectCharacter,-1,"Wizard",spr,spr,spr,spr,600,200,200,60,1,0,100,111,0,0);
-	SetButton(&b6,5,SelectCharacter,-1,"hello",spr,spr,spr,spr,600,300,200,60,1,0,100,111,0,0);
-	SetButton(&b7,6,SelectCharacter,-1,"hello",spr,spr,spr,spr,600,400,200,60,1,0,100,111,0,0);
-	SetButton(&b8,7,SelectCharacter,-1,"hello",spr,spr,spr,spr,600,500,200,60,1,0,100,111,0,0);
+	SetButton(&b6,5,SelectCharacter,-1,"Locked",spr,spr,spr,spr,600,300,200,60,1,0,100,111,0,0);
+	SetButton(&b7,6,SelectCharacter,-1,"Locked",spr,spr,spr,spr,600,400,200,60,1,0,100,111,0,0);
+	SetButton(&b8,7,SelectCharacter,-1,"Locked",spr,spr,spr,spr,600,500,200,60,1,0,100,111,0,0);
+	SetButton(&bb,4,GoBack,-1,"Go Back",spr,spr,spr,spr,700,70,200,60,1,0,100,111,0,0);
 	
 }
 
@@ -61,6 +63,7 @@ void DrawCharSel(){
 	DrawButton(&b6);
 	DrawButton(&b7);
 	DrawButton(&b8);
+	DrawButton(&bb);
 }
 
 void UpdateCharSel(){
@@ -76,12 +79,14 @@ void UpdateCharSel(){
 			b4.onClick(1,b4.buttonID,player);
 		if(MouseInButton(&b5))
 			b5.onClick(1,b5.buttonID,player);
-		if(MouseInButton(&b6))
+		/*if(MouseInButton(&b6))
 			b6.onClick(1,b6.buttonID,player);
 		if(MouseInButton(&b7))
 			b7.onClick(1,b7.buttonID,player);
 		if(MouseInButton(&b8))
-			b8.onClick(1,b8.buttonID,player);
+			b8.onClick(1,b8.buttonID,player);*/
+		if(MouseInButton(&bb))
+			bb.onClick(0);
     }
 	DrawMouse();
 }

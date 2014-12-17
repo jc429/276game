@@ -46,4 +46,6 @@ void UpdateCharCr();
 void InitFont();
 
 
+void GoBack(int a,...);
+
 #endif

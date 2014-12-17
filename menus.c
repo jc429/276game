@@ -66,7 +66,7 @@ void DrawMenus(){
 	
 	SDL_Color bg_color = {0,0,0};
 	
-	DrawText("yeah buddy",400,43);
+	DrawText("This is A Game",400,43);
 	
 	
 }

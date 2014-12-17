@@ -11,9 +11,11 @@ Fighter *efighter;
 extern GameState_T GameState;
 extern SDL_Surface *screen, *buffer;
 extern Button b1,b2,b3,b4,b5,b6,b7,b8;
+Button bb;
 extern Mouse mouse;
 int loaded;
 Uint8 inputs =  00000000;
+extern Uint8* keys;
 Sprite *spr, *plus, *minus;
 int f; /*which fighter is loaded?*/
 
@@ -51,9 +53,10 @@ void InitCharCrSel(){
 	SetButton(&b3,2,EditCharacter,-1,"Waddle Dee",spr,spr,spr,spr,250,400,200,60,1,0,100,111,0,0);
 	SetButton(&b4,3,EditCharacter,-1,"Mega Man",spr,spr,spr,spr,250,500,200,60,1,0,100,111,0,0);
 	SetButton(&b5,4,EditCharacter,-1,"Wizard",spr,spr,spr,spr,600,200,200,60,1,0,100,111,0,0);
-	SetButton(&b6,5,EditCharacter,-1,"hello",spr,spr,spr,spr,600,300,200,60,1,0,100,111,0,0);
-	SetButton(&b7,6,EditCharacter,-1,"hello",spr,spr,spr,spr,600,400,200,60,1,0,100,111,0,0);
-	SetButton(&b8,7,EditCharacter,-1,"hello",spr,spr,spr,spr,600,500,200,60,1,0,100,111,0,0);
+	SetButton(&b6,5,EditCharacter,-1,"Locked",spr,spr,spr,spr,600,300,200,60,1,0,100,111,0,0);
+	SetButton(&b7,6,EditCharacter,-1,"Locked",spr,spr,spr,spr,600,400,200,60,1,0,100,111,0,0);
+	SetButton(&b8,7,EditCharacter,-1,"Locked",spr,spr,spr,spr,600,500,200,60,1,0,100,111,0,0);
+	SetButton(&bb,4,GoBack,-1,"Go Back",spr,spr,spr,spr,700,70,200,60,1,0,100,111,0,0);
 }
 
 void InitCharCr(){
@@ -64,8 +67,11 @@ void InitCharCr(){
 	by += 50;
 	SetButton(&b3,0,DecrementStat,-1,"",minus,spr,spr,spr,bx,by,32,32,1,0,100,111,0,0);
 	SetButton(&b4,1,IncrementStat,-1,"",plus,spr,spr,spr,bx+40,by,32,32,1,0,100,111,0,0);
-	
-	SetButton(&b5,4,SaveCharacter,-1,"Save",spr,spr,spr,spr,600,200,200,60,1,0,100,111,0,0);
+	bx += 50; by += 50;
+	SetButton(&b6,0,DecrementStat,-1,"",minus,spr,spr,spr,bx,by,32,32,1,0,100,111,0,0);
+	SetButton(&b7,1,IncrementStat,-1,"",plus,spr,spr,spr,bx+40,by,32,32,1,0,100,111,0,0);
+	bx = 600; by = 200;
+	SetButton(&b5,4,SaveCharacter,-1,"Save",spr,spr,spr,spr,bx,by,200,60,1,0,100,111,0,0);
 }
 
 void IncrementStat(int a,...){
@@ -73,7 +79,11 @@ void IncrementStat(int a,...){
 	va_list args;
 	va_start(args,a);
 	stat = va_arg(args,int*);
-	++*stat;
+	if(keys[SDLK_LSHIFT]){
+		*stat = *stat+10;
+	}
+	else
+		++*stat;
 	va_end(args);
 }
 
@@ -82,7 +92,11 @@ void DecrementStat(int a,...){
 	va_list args;
 	va_start(args,a);
 	stat = va_arg(args,int*);
-	--*stat;
+	if(keys[SDLK_LSHIFT]){
+		*stat = *stat-10;
+	}
+	else
+		--*stat;
 	va_end(args);
 }
 
@@ -111,18 +125,26 @@ void DrawCharCr(){
 		DrawButton(&b6);
 		DrawButton(&b7);
 		DrawButton(&b8);
+		DrawButton(&bb);
 	}
 	else if(loaded){
+		DrawText("Hold Shift to move",600,300);
+		DrawText("in increments of 10",600,330);
 		char str[30];
 		sprintf(str,"Health: %d",efighter->healthmax);
 		DrawText(str,50,200);
 		sprintf(str,"Jumps: %d",efighter->maxjumps);
 		DrawText(str,50,250);
+		sprintf(str,"Walk Speed: %d",efighter->walkspeed);
+		DrawText(str,50,300);
 		DrawButton(&b1);
 		DrawButton(&b2);
 		DrawButton(&b3);
 		DrawButton(&b4);
 		DrawButton(&b5);
+		DrawButton(&b6);
+		DrawButton(&b7);
+		DrawButton(&bb);
 		DrawChar(efighter,screen);
 		UpdateFrame(efighter);
 	}
@@ -132,6 +154,9 @@ void DrawCharCr(){
 void UpdateCharCr(){
 	if(mouse.clicked)
     {
+		
+		if(MouseInButton(&bb))
+			bb.onClick(0);
 		if(!loaded){
 			if(MouseInButton(&b1))
 				b1.onClick(1,b1.buttonID);
@@ -154,16 +179,23 @@ void UpdateCharCr(){
 				b3.onClick(1,&efighter->maxjumps);
 			if(MouseInButton(&b4))
 				b4.onClick(1,&efighter->maxjumps);
+			if(MouseInButton(&b6))
+				b6.onClick(1,&efighter->walkspeed);
+			if(MouseInButton(&b7))
+				b7.onClick(1,&efighter->walkspeed);
+			
 			
 			if(MouseInButton(&b5))
 				b5.onClick(0);
 		}
-    }else{
-		DrawPixel(buffer,0,0,0,mouse.x,mouse.y);
-	}
+    }
 }
 
 void SaveCharacter(int a,...){
 	SaveCFG(efighter,GetCharPath(f));
 }
 
+void GoBack(int a,...){
+	free(efighter);
+	GoToMenu();
+}
