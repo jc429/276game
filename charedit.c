@@ -1,7 +1,7 @@
 #include "game.h"
+#include "fighter.h"
 
-#define NUMCHARS 8 /*number of characters in the game*/
-#define NUMANIMS 5 /*animations per character*/
+
 
 void CharEdit (int i);
 void (*OnClick)(int);
@@ -21,12 +21,12 @@ int f; /*which fighter is loaded?*/
 
 int framedata[NUMCHARS][NUMANIMS] = {  
 	/*idle, idle2, walk, run, crouch,jumpsq,jump,fall,land,dashf,dashb, */
-	/*For Now: {idle,attack1,attack2,hit,dead}*/
+	/*For Now: {idle,walk,jump,crouch,attack1,attack2,hit,dead}*/
 	/*each int denotes the starting point for the animation, in a set order*/
 	/*MAKE SURE EVERY INT IS LARGER THAN THE ONE BEFORE IT*/
 	/*there needs to be a final int that isn't a seed, for the final animation's length*/
-	/*C1 - DEBUG*/{16,32, 33, 34, 35} ,   /*  frames for character 1 */
-	/*C2 - DOOM*/{0, 20, 24, 28, 29} ,   /*  ex: column 1 is idle, then idle2, then attacking, then hit, etc */
+	/*C1 - DEBUG*/{0, 10, 15, 20, 25, 30, 32, 33, 34, 35},/*  frames for character 1 */
+	/*C2 - DOOM*/{0, 20, 24, 28, 29} ,	/*  ex: column 1 is idle, then idle2, then attacking, then hit, etc */
 	/*C3 - WADDLE*/{0, 4, 11, 15, 16},
 	/*C4 - MEGAMAN*/{0, 2, 3, 4, 5},
 	/*C5 - WIZARD*/{0, 10, 22, 30, 31},
@@ -105,7 +105,7 @@ void EditCharacter(int a,...){
 	va_start(args,a);
 	f = va_arg(args,int);
 	LoadFighter(efighter,(Character_T)f);
-	efighter->inputs = &inputs;
+	efighter->curinput = &inputs;
 	efighter->x = 100;
 	efighter->y = 150;
 	//Unload the old buttons*/

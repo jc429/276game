@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
 	debuginputs = 1,bsize = 5;
 
 	/*defaults for placeholder reasons*/
-	c1 = DOOM;
-	c2 = MEGA;
+	c1 = DEBUG;
+	c2 = DEBUG;
 	stage = ST_PLATFORM;
 	/**/
 	pause = 0;
@@ -150,6 +150,12 @@ void DrawVersus(){
 	DrawFighters(screen);
 	DrawMeters(&f1,&f2);	
 	DrawNextRoundTimer(nexttimer);
+	int DEBUGSTATE = 1;
+	if(DEBUGSTATE){
+		char a[20];
+		sprintf(a,"P1state: %d",f1.state);
+		DrawText(a,270,20);
+	}
 	if(f2.combo>0){
 		char a[20]; 
 		sprintf(a,"Combo: %d!",f2.combo);
@@ -263,24 +269,28 @@ void InputControl(){
 
 	if(debuginputs){
 		for(i=0;i<8;i++){
-			if(p1input & 1<<i)
-				for(k=0;k<bsize;k++)
-					for(l=0;l<bsize;l++)
-						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),5+l); 
-			else 
-				for(k=0;k<bsize;k++)
-					for(l=0;l<bsize;l++)
-						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),5+l); 
+			for(int m=0;m<4;m++){
+				if(f1.inputs[m] & 1<<i)
+					for(k=0;k<bsize;k++)
+						for(l=0;l<bsize;l++)
+								DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),(m+1)*(bsize+1)+l); 
+				else 
+					for(k=0;k<bsize;k++)
+						for(l=0;l<bsize;l++)
+							DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),(m+1)*(bsize+1)+l); 
+			}
 		}
 		for(i=0;i<8;i++){
-			if(p2input & 1<<i)
-				for(k=0;k<bsize;k++)
-					for(l=0;l<bsize;l++)
-						DrawPixel(screen,255,0,0,5+k+(bsize+1)*(8-i),12+l); 
-			else 
-				for(k=0;k<bsize;k++)
-					for(l=0;l<bsize;l++)
-						DrawPixel(screen,0,180,180,5+k+(bsize+1)*(8-i),12+l); 
+			for(int m=0;m<4;m++){
+				if(f2.inputs[m] & 1<<i)
+					for(k=0;k<bsize;k++)
+						for(l=0;l<bsize;l++)
+							DrawPixel(screen,255,0,0,955+k+(bsize+1)*(8-i),(m+1)*(bsize+1)+l); 
+				else 
+					for(k=0;k<bsize;k++)
+						for(l=0;l<bsize;l++)
+							DrawPixel(screen,0,180,180,955+k+(bsize+1)*(8-i),(m+1)*(bsize+1)+l);
+			}
 		}
 	}
 
@@ -294,8 +304,10 @@ void UpdateVersus(){
 				UpdateFrame(&f1);
 			if(f2.state!=HIT&&f2.state!=DEAD)
 				UpdateFrame(&f2);
-			FighterInputs(&f1,p1input);
-			FighterInputs(&f2,p2input);
+			UpdateInputs(&f1,p1input);
+			UpdateInputs(&f2,p2input);
+			ProcessInputs(&f1);
+			ProcessInputs(&f2);
 			FighterThink(&f2);
 			FighterThink(&f1);
 			FighterUpdate(&f1);

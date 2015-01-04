@@ -1,14 +1,17 @@
 #include "fighter.h"
 #include "stage.h"
 
-#define NUMCHARS 3 /*number of characters in the game*/
-#define NUMANIMS 5 /*animations per character*/
 /*** Where should this goooooo? ***/
 #define SHOWSPRITES 1
 #define SHOWPOINTS 0
 #define drawsprite 1
 #define drawhitbox 0
 #define drawhurtbox 0
+
+#define LWALL 1
+#define RWALL 1024
+#define FLOOR 767
+#define CEILING 1
 
 extern int framedata[NUMCHARS][NUMANIMS];
 extern Uint8 p1input, p2input;
@@ -30,10 +33,10 @@ void InitFighters(Character_T p1, Character_T p2)
 	LoadFighter(&f2,p2);
 	f1.opponent = &f2;
 	f2.opponent = &f1;	
-	f1.inputs = &p1input;
+	f1.curinput = &p1input;
 	f1.controls = 1;
 	f1.y = st.platform_list->p_ypos;
-	f2.inputs = &p2input;
+	f2.curinput = &p2input;
 	f2.controls = 1;
 	f2.y = st.platform_list->p_ypos;
 	f1.x = st.P1spawn;
@@ -108,10 +111,10 @@ void CheckFacing(Fighter* f){
 /** update the fighter's animation frame*/
 void UpdateFrame(Fighter* f){	
 	f->frame += 1;
-	if(f->frame >= (f->anim_length+f->anim_seed))
-		if(*f->inputs == 00000000)
+	if(f->frame >= (f->anim_length+f->anim_seed)){
+		if(f->grounded && *f->inputs == 00000000)
 			ChangeState(f,IDLE);
-
+	}
 	if(f->frame >= (f->anim_length+f->anim_seed)){
 		f->frame = ((f->frame-f->anim_seed)%f->anim_length)+f->anim_seed;
 	}
@@ -278,23 +281,49 @@ int SaveCFG(Fighter* f,char* path){
 }
 /**************************************************************************************************/
 
+void UpdateInputs(Fighter* f,Uint8 newinput){
+	for(int i = 3; i >0; i--){
+		f->inputs[i] = f->inputs[i-1];
+	}
+	f->inputs[0] = newinput;
+}
+
 /** do things based on the player inputs*/
-void FighterInputs(Fighter* f,Uint8 inputs){
+void ProcessInputs(Fighter* f){
 	if(f->controls){ /*if our controls aren't locked*/
+		Uint8 inputs = f->inputs[0];
+		Uint8 previnputs = f->inputs[1];
 		/*lrudabxy - order of buttons mapped to bits*/
-		if((inputs & 1<<7)&&(~inputs & 1<<6)){
-			f->facing = -1;
-			f->vx = -1*f->walkspeed;
-		}
-		else if((inputs & 1<<6)&&(~inputs & 1<<7)){
-			f->facing = 1;
-			f->vx = f->walkspeed;
-		}
-		else{
-			f->vx = 0;
+		if(f->grounded){
+			if((inputs & 1<<7)&&(~inputs & 1<<6)){
+				ChangeState(f,WALKING);
+				f->facing = -1;
+				f->vx = -1*f->walkspeed;
+			}
+			else if((inputs & 1<<6)&&(~inputs & 1<<7)){
+				ChangeState(f,WALKING);
+				f->facing = 1;
+				f->vx = f->walkspeed;
+			}
+			else{
+				f->vx = 0;
+				ChangeState(f,IDLE);
+			}
+		}else{
+			if((inputs & 1<<7)&&(~inputs & 1<<6)){
+				f->vx = -1*f->walkspeed;
+			}
+			else if((inputs & 1<<6)&&(~inputs & 1<<7)){
+				f->vx = f->walkspeed;
+			}
+			else{
+				f->vx = 0;
+			}
 		}
 		if(inputs & 1<<5){
 			Jump(f);
+		}else if(inputs & 1<<4){
+			ChangeState(f,CROUCHING);
 		}
 		if(inputs & 1<<3){
 			Attack(f,ATK_N_P);
@@ -344,6 +373,8 @@ void FighterUpdate(Fighter *f){
 		
 		
 	}else{
+		if(f->vy > 0 && f->state == JUMPING)
+			ChangeState(f,FALLING);
 		f->y += f->vy;
 		f->vy+=2; 
 		if(f->grounded&&f->jumptimer<=0){
@@ -355,12 +386,13 @@ void FighterUpdate(Fighter *f){
 
 	f->x+=f->vx;
 
+
 	/*screen collision checks*/
-	if(f->x < 1) f->x = 1;
-	if(f->x > 1024) f->x = 1024;
-	if(f->y < 1){ f->y = 1; f->vy = 0;}
-	if(f->y+f->vy > 767){ 
-		f->y = 767; 
+	if(f->x < LWALL) f->x = LWALL;
+	if(f->x > RWALL) f->x = RWALL;
+	if(f->y < CEILING){ f->y = CEILING; f->vy = 0;}
+	if(f->y+f->vy > FLOOR){ 
+		f->y = FLOOR; 
 		f->vy = 0;
 		f->grounded=1;
 		if(f->state!=DEAD)
@@ -390,7 +422,7 @@ void ChangeState(Fighter* f, State_T st){
 /** apply a jump*/
 void Jump(Fighter* f){
 	if(f->state!=DEAD&&f->hitstun<0&&f->hasjump>0&&f->jumptimer<0){
-	/*	ChangeState(f,JUMP_G_N);*/
+		ChangeState(f,JUMP_G_N);
 		f->vy = -20;
 		f->grounded = 0;
 		f->hasjump--;

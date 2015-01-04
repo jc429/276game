@@ -4,6 +4,9 @@
 #include "graphics.h"
 #include "stage.h"
 
+#define NUMCHARS 8 /*number of characters in the game*/
+#define NUMANIMS 10 /*animations per character*/
+
 /** List of Characters in the game*/
 typedef enum{ 
 	C1 = 0, /*buggy test case*/
@@ -27,7 +30,8 @@ typedef enum{
 typedef struct Fighter{
 	struct Fighter *opponent;	/**< pointer to the other guy*/
 	Character_T chr;			/**< what character are we?*/
-	Uint8 *inputs;				/**< pointer to the inputs of the player using this fighter*/
+	Uint8 *curinput;			/**< pointer to the current frame of input*/
+	Uint8 inputs[4];			/**< pointer to the inputs of the player using this fighter*/
 	int controls;				/**< used to lock the controls (0 = locked)*/
 	Uint8 victories;			/**< for tracking rounds won*/
 /* Animation*/
@@ -93,20 +97,21 @@ typedef enum{
 	/*MOVEMENT*/
 	IDLE = 0,			/*idle pose*/
 	IDLE2,				/*mini-action if you stay idle too long*/
-	WALKING,
+	WALKING = 1,
 	RUNNING,
-	CROUCHING,
+	CROUCHING = 4,
 	CRAWLING_F,			/*maybe some characters can crawl*/
 	CRAWLING_B,
 
 	JUMPSQUAT,		
-	JUMP_G_N,			/*jumping: ground or air, forward, neutral, or back*/
+	JUMPING = 2,
+	JUMP_G_N = 2,			/*jumping: ground or air, forward, neutral, or back*/
 	JUMP_G_F,			/*may not need both grounded and aerial*/
 	JUMP_G_B,
 	JUMP_A_N,
 	JUMP_A_F,
 	JUMP_A_B,
-	FALLING,
+	FALLING = 3,
 	LANDING,
 
 	DASHING_F,
@@ -122,7 +127,7 @@ typedef enum{
 	AIRDASH_D_B,
 
 	/*ATTACKS*/
-	ATTACKING = 1,
+	ATTACKING = 5,
 	ATK_CLANK,				/*when two hitboxes collide but no hurtboxes do*/
 	ATK_CLANK_AIR,
 
@@ -146,8 +151,8 @@ typedef enum{
 	GRABBED_FREE,		/*victim being freed from grab*/
 
 	/*OTHER*/
-	HIT = 3,
-	DEAD = 4,
+	HIT = 7,
+	DEAD = 9,
 	BLOCKING,
 	BLOCKING_CR,
 	PUSHBLOCK,			/*will this even have pushblock?*/
@@ -156,7 +161,7 @@ typedef enum{
 	GETUP_N,			/*getting up after a combo, "teching" (neutral, forward, back)*/
 	GETUP_F,
 	GETUP_B,
-	POPOUT_N,			/*popping out of a combo in midair*/
+	POPOUT_N = 8,			/*popping out of a combo in midair*/
 	POPOUT_F,
 	POPOUT_B,
 
@@ -203,7 +208,8 @@ int LoadCFG(Fighter* f,char* path);
 int SaveCFG(Fighter* f,char* path);
 /*************************************************************/
 void InputControl();
-void FighterInputs(Fighter* f,Uint8 inputs);
+void UpdateInputs(Fighter* f,Uint8 inputs);
+void ProcessInputs(Fighter* f);
 void FighterThink(Fighter*);
 void FighterUpdate(Fighter*);
 /*************************************************************/
