@@ -6,8 +6,9 @@ WARNING: I funked up real good and compiled my project as C++ code. It compiles 
 
 Controls:
 
-Space - Pause
-Esc - Quit
+Space - Pause (VS Mode)
+--While Paused, press (left) Alt to advance one frame.
+Esc - Quit (VS), Exit Program (anywhere else)
 
 P1:
 WASD to move
@@ -18,10 +19,10 @@ Arrows to move
 O or P to attack
 
 Notes:
-Because Dr. Doom normally would ne too tall to punch Waddle Dee, I pushed him farther down to compensate.
-This resulted in silly graphics but it was the quickest way to make Dr. Doom capable of winning.
+-Collision is janky on small characters. I'm looking into it.
 
-Due to the limitations of computer keyboards, only 3-4 inputs max will register at one time.
+-Debug Man has no hit or hurtboxes apparently.
+
+-Due to the limitations of computer keyboards, only 3-4 inputs max will register at one time.
 Pretend it's hard mode or something.
 
-Waddle Dee has a double jump. Use it. Abuse it.
